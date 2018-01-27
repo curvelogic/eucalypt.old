@@ -1,0 +1,20 @@
+# -*- mode: conf -*-
+
+### Namespacing
+
+# Blocks are letrecs and alists combined so they act as namespaces
+
+` { if: :true }
+top: {
+  intermediate: {
+    greet: "Hello {{common.name}}" // { assert: "Hello Andrew" }
+
+    or-alternatively: "Hello {{top.common.name}}"
+      // { assert: "Hello Andrew" }
+  }
+  common: {
+    name: "Andrew"
+  }
+}
+
+# From now on examples will be namespaced...

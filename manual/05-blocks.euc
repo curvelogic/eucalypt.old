@@ -1,0 +1,26 @@
+# -*- mode: conf -*-
+
+### Quoting keys
+
+# Keys can be quoted to enable them to include special characters.
+# This is useful when describing a file system:
+
+` { if: :false }
+'~': {
+
+  '.emacs.d': git("git@...")
+
+  '.boot': {
+    'boot.profile': file("http://...")
+  }
+
+  '.lein': {
+
+    'profiles.clj':  {
+
+      content: ""
+      permissions: "644"
+    }
+  }
+
+}

@@ -1,0 +1,17 @@
+# -*- mode: conf -*-
+
+### Concatentation and application
+
+# Concatenation is a form of postcomposition. A block is also a
+# function which merges its contents into another block:
+combined: { title: "block one" } { content: "blah" }
+// { assert: { title: "block one" content: "blah" } }
+
+# This is more useful for customising the outputs of functions:
+useful: greet("George") { tag: "metadata" }
+// { assert: { greeting: "well hello George" tag: "metadata" } }
+
+# Blocks allow the use of various anaphora (super...) to
+# look a bit like ad hoc inheritance
+something: useful { tag: "{{super.tag}} overridden" }
+// { assert: { greeting: "well hello George" tag: "metadata overridden" } }

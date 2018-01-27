@@ -1,0 +1,65 @@
+# -*- mode: conf -*-
+
+### Running `euc`
+
+# `euc --xml simple.ont types`
+#
+# ```xml
+# <types>
+#   <count>12345</count>
+# </types>
+# ```
+
+# The command line follows a few general principles:
+
+# - URLs throughout; wherever a filename may be supplied, so may a
+# URL - Any number of input files may be provided; by default these
+# should be `.euc` files but the command line program will interpret
+# other input files as appropriate and create blocks for them. The end
+# of a set of input files (and the start of general command line
+# arguments which are passed through to the eucalypt script is
+# signalled by a --):
+
+# `euc intro.euc data.json data.yml -- -blah -v3`
+#
+# The name of the block created for any data file may be controlled
+# too by prefixing `name=`:
+#
+# `euc trans.euc in=http://blah/input.json`
+
+# Eucalypt can be used in various ways; firstly as a front end to
+# other formats for configuration, either outputing configuration
+# files for other programs or piping directly into them.
+
+# `euc -x yaml simple.euc builtins.happies`
+
+# `euc -x json simple.euc laziness.ten-exes`
+
+# `euc -x edn simple.euc '~' | echo`
+
+# -x (export) can be used to control output format - default is json.
+
+# -r (render) can be used to render source level
+# documentation.
+
+# This file can be rendered to markdown using:
+# `euc -r markdown intro.euc`
+
+# For tedious and frustrating configuration formats like
+# CloudFormation JSON for instance this can vastly increase the
+# expressiveness and maintainability of the configuration. (But see
+# terraform for a better solution to the CloudFormation problem.)
+
+# `env | euc --xml --input-kv --xml simple.euc environment.echo(input)`
+
+` { if: :environment }
+environment: {
+  echo: map("ENV {k} is {v}\n")
+}
+
+#
+# Other input formats --input-json, --input-xml, --input-yaml,
+# --input-raw
+#
+# These input filters transform the input into euc block structures
+# that can be easily accessed in eucalypt.

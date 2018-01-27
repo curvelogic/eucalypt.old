@@ -1,0 +1,60 @@
+# -*- mode: conf -*-
+
+### Functions & Currying
+
+# Functions are defined with a fixed arity and are curried so that
+# calling with fewer args returns a function.
+
+` { if: :currying }
+currying: {
+
+  ## Wrap wavy arms around a string
+  wrap(prefix, suffix, str): str "{{prefix}}{{str}}{{suffix}}"
+
+  make-happy: wrap("\\", "/")
+
+  hooray: make-happy("me")
+  // { assert: "\\me/" }
+
+  # concatenation is just (post) composition so we can equivalently
+  # say:
+  yay: "me" make-happy
+  // { assert: "\\me/" }
+
+  # and we can thread results through several functions
+  many: "rachit" make-happy greet
+  #  => "well hello \\rachit/"
+
+  # parentheses can also be used for precedence so this is equivalent
+  # to a sort of backwards lisp thing...
+  just-like: "me" ("/" ("\\" wrap))
+  // { assert: "\\me/" }
+
+  # That leads to a potentially ambiguity x (y) is that calling x on y or y on
+  # x?
+  # Note that function application requires commas which are illegal
+  # in concatenations so the ambiguity only arises with single
+  # argument calls.
+
+  # The ambiguity is resolved as follows by demanding that parens that
+  # signify function application to an argument list may not be
+  # separated by whitespace from the function term
+
+  ` "returns fn to reverse each element of a list"
+  w: map(reverse)
+
+  ` "reverses a list bound to the name map"
+  x: map (reverse)
+
+  ` "reverses a list bound to the name map"
+  z: map reverse
+
+  ` "reverses a list bound to the name map"
+  v: reverse(map)
+
+  ` "returns fn to reverse each element of a list"
+  y: reverse (map)
+
+  ` "returns fn to reverse each element of a list"
+  u: reverse map
+}

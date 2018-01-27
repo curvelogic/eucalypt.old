@@ -1,0 +1,141 @@
+# Example of using eucalypt to define infrastructure by generating
+# CloudFormation JSON templates.
+
+## Library of generic CloudFormation functions and constants
+
+` "Provide an outline block for a CloudFormation template"
+base-template(desc): {
+  AWSTemplateFormatVersion: "2010-09-09"
+  Description: desc
+  Parameters: {}
+  Conditions: {}
+  Resources: {}
+  Outputs: {}
+}
+
+` "Provide an outline parameter block"
+param(desc, type): {
+  Description: desc
+  Type: type 
+}
+
+` "AWS entity types"
+type: {
+  vpc: "AWS::EC2::VPC"
+  subnet: "AWS::EC2::Subnet"
+  key: "AWS::EC2::KeyPair::KeyName"
+  igw: "AWS::EC2::InternetGateway"
+  vpc-igw: "AWS::EC2::VPCGatewayAttachment"
+  hosted-zone: "AWS::Route53::HostedZone"
+  string: "String"
+}
+
+` "Basic VPC block for customisation"
+base-vpc: {
+  Type: type.vpc
+  Properties: {}
+}
+
+base-subnet(vpc, az, cidr, public-ip): {
+  Type: type.subnet
+  Properties: {
+    AvailabilityZone: az
+  }
+}
+
+base-igw(tags): {
+  Type: type.igw
+}
+
+tagged(tags, block):
+  block {
+    Properties: { Tags: tags }
+  }
+
+ref(label): {
+  'Fn::Ref': label
+}
+
+` "CloudFormation fn to join with char"
+join(char, vals): {
+  'Fn::Join': [char, vals]
+}
+
+` "CloudFormation fn to join without intervening char"
+cat(vals): {
+  'Fn::Join': ["", vals]
+}
+
+` "!!TODO"
+to-tags(block): {
+}
+
+# Template
+
+refs: {
+  env: ref("EnvironmentName")
+}
+
+` "A basic tag map for any entity. Invoke to-tags once merged with other"
+tagmap(suffix): {
+  Name: [refs.env, suffix] cat
+  Environment: refs.env
+}
+
+region: "eu-west-1"
+
+zones:
+  ["a", "b", "c"]
+  map(strcat(region))
+    // ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+
+` "Our VPC"
+vpc: base-vpc {
+  Properties: {
+    CidrBlock: "172.28.0.0/16"
+    EnableDnsSupport: "true"
+    EnableDnsHostnames: "true"
+    InstanceTenancy: "default"
+    Tags: tagmap("VPC") to-tags
+  }
+}
+
+` "An internet gateway with tags"
+igw: base-igw tagged(tag-map("IGW") to-tags)
+
+` :todo
+dmz-cidr(az): {
+}
+
+dmz-subnet(az):
+  base-subnet(vpc, az, dmz-cidr(az), true)
+  tagged(tag-map(strcat("Subnet", az)) to-tags)
+
+dmz-name(az): sym(strcat("OurDMZSubnet", az))
+
+dmz-subnets:
+  zipmap(zones map(dmz-name),
+         zones map(dmz-subnet)) 
+
+# `target` metadata specifies a named entrypoint
+` { doc: "The final template" target: "vpc" }
+template:
+  base-template("A virtual private cloud")
+  
+  {
+    Parameters: {
+      KeyPair: param("Key pair to use", type.key)
+      EnvironmentName: param("Environment name", type.string)
+    }
+  }
+  
+  {
+    Resources: {
+      OurVPC: vpc
+      OurInternetGateway: igw
+      # TODO: possible?:
+      OurVPCGatewayAttachment: attach(OurVPC, OurInternetGateway)
+      # splice in subnets TODO: syntax
+      ~ dmz-subnets
+    }
+  }
