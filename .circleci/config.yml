@@ -16,4 +16,5 @@ jobs:
               docker login -u $DOCKER_USER -p $DOCKER_PASS
               docker tag eucalypt-test-harness "curvelogic/eucalypt-test-harness:${CIRCLE_SHA1}"
               docker push "curvelogic/eucalypt-test-harness:${CIRCLE_SHA1}"
+              docker tag eucalypt-test-harness "curvelogic/eucalypt-test-harness:latest"
             fi
