@@ -87,7 +87,7 @@ region: "eu-west-1"
 zones:
   ["a", "b", "c"]
   map(strcat(region))
-    // ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+    //=> ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
 
 ` "Our VPC"
 vpc: base-vpc {
@@ -114,7 +114,7 @@ dmz-subnet(az):
 dmz-name(az): sym(strcat("OurDMZSubnet", az))
 
 dmz-subnets:
-  zipmap(zones map(dmz-name),
+  zip-kv(zones map(dmz-name),
          zones map(dmz-subnet)) 
 
 # `target` metadata specifies a named entrypoint

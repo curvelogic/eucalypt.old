@@ -1,0 +1,5 @@
+#!/usr/bin/env eu -B
+# -*- mode: conf -*-
+
+` { eu-special : a.b.c }
+x : []

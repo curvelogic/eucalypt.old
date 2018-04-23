@@ -1,0 +1,5 @@
+#!/usr/bin/env eu -B
+# -*- mode: conf -*-
+
+` { doc: "`(f ∘ g)` - return composition of `f` and `g`" }
+(f ∘ g): compose(f,g)

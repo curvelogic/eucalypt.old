@@ -1,3 +1,4 @@
+#!/usr/bin/env eu -B
 # -*- mode: conf -*-
 
 # Simple test of SKI combinators and simple functions
@@ -15,7 +16,7 @@ k1(x, y): y
 s(f, g, x): g(x) f(x)
 
 ` " f(g(x)) "
-compose(f, g, x): g(x) f
+compose(f, g, x): x g f
 
 twice(f): compose(f, f)
 
