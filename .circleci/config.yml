@@ -17,5 +17,5 @@ jobs:
               docker tag eucalypt-test-harness "curvelogic/eucalypt-test-harness:${CIRCLE_SHA1}"
               docker push "curvelogic/eucalypt-test-harness:${CIRCLE_SHA1}"
               docker tag eucalypt-test-harness "curvelogic/eucalypt-test-harness:latest"
-              docker push eucalypt-test-harness "curvelogic/eucalypt-test-harness:latest"
+              docker push "curvelogic/eucalypt-test-harness:latest"
             fi
