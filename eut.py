@@ -24,6 +24,8 @@ class Result(Enum):
 
 class Test:
 
+    """ A test that by default passes with a zero return code """
+
     RE = re.compile(r"(x?)(\d+)_(.*?).eu")
 
     def __init__(self, filepath):
@@ -34,51 +36,69 @@ class Test:
         self.name = name
         self.outfile = output_directory / filepath.with_suffix(".out").name
         self.errfile = output_directory / filepath.with_suffix(".err").name
+        self.eu_args = ["eu", "-B", filepath]
 
     def failed(self):
         return self.result is Result.FAIL
 
-def run_test(test):
+    def check(self):
+        return self.proc.returncode == 0
 
-    """ Run shebang eucalypt files """
+    def run(self):
 
-    print(test.id, test.name, sep='\t', end='\t')
+        """ Run eucalypt files """
 
-    if test.ignore:
+        print(self.id, self.name, sep='\t', end='\t')
 
-        test.result = Result.IGNORE
-        print("ignore")
+        if self.ignore:
 
-    else:
+            self.result = Result.IGNORE
+            print("ignore")
 
-        with open(test.outfile, "wb") as out:
-            with open(test.errfile, "wb") as err:
-                proc = subprocess.run([test.filepath],
-                                      shell=True,
-                                      stdout=out,
-                                      stderr=err)
-
-        if proc.returncode == 0:
-            print("pass")
-            test.proc = proc
-            test.result = Result.SUCCESS
         else:
-            print("FAIL\n")
-            with open(test.errfile, "r") as err:
-                print("error output:\n---")
-                sys.stdout.write(err.read())
-                print("---\n")
-            test.proc = proc
-            test.result = Result.FAIL
 
-    return test
+            with open(self.outfile, "wb") as out:
+                with open(self.errfile, "wb") as err:
+                    proc = subprocess.run(self.eu_args,
+                                          stdout=out,
+                                          stderr=err)
 
-def find_tests():
+            self.proc = proc
+
+            if self.check():
+                print("pass")
+                self.result = Result.SUCCESS
+            else:
+                print("FAIL\n")
+                with open(self.errfile, "r") as err:
+                    print("error output:\n---")
+                    sys.stdout.write(err.read())
+                    print("---\n")
+                self.result = Result.FAIL
+
+        return self
+
+class ErrorTest(Test):
+
+    """A test that expects a non-zero returncode"""
+
+    def __init__(self, filepath):
+        super().__init__(filepath)
+        self.id = "E" + self.id
+
+    def check(self):
+        return self.proc.returncode > 0
+
+def find_simple_tests():
     return [Test(p) for p in sorted(test_directory.glob("*.eu"))]
+
+def find_error_tests():
+    return [ErrorTest(p) for p in sorted(test_directory.glob("errors/*.eu"))]
 
 def main(args):
     prepare_directories()
-    results = [run_test(t) for t in find_tests()]
+    tests = find_simple_tests() + find_error_tests()
+    results = [t.run() for t in tests]
     if any(r.failed() for r in results):
         print("FAIL")
         return 1
