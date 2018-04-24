@@ -1,3 +1,4 @@
-/test/out
 /docs/Gemfile.lock
 /docs/_site
+/__pycache__
+/.build/output

@@ -3,8 +3,10 @@
 # must contain the path.
 FROM ubuntu:18.04
 
-RUN apt-get update && apt-get install -y libgmp10
+RUN apt-get update \
+ && apt-get install -y libgmp10 python3-pip python3-dev
 
+ADD eut.py eut.py
 ADD test test
 ADD entrypoint.sh entrypoint.sh
 
