@@ -1,0 +1,6 @@
+#!/usr/bin/env eu -B
+# -*- mode: conf -*-
+
+if: __IF
+zero: __IF(__FALSE, 3, 0)
+three: __IF(__TRUE, 3, 0)

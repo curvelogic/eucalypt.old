@@ -1,0 +1,12 @@
+#!/usr/bin/env eu -B
+# -*- mode: conf -*-
+
+t:	 __TRUE
+f:	 __FALSE
+or:	 __OR
+and:	 __AND
+eq:	 __EQ
+not:	 __NOT
+# y:	 eq(or(f,and(t,t)),t)
+# n:	 not(eq(and(f,t),and(t,f)))
+# r:	 eq(y,not(n))
