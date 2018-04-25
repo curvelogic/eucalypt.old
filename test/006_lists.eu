@@ -1,0 +1,24 @@
+#!/usr/bin/env eu -B
+# -*- mode: conf -*-
+
+h0: __HEAD(__CONS([1, 2, 3] __HEAD, [1, 2, 3] __TAIL))
+
+list: [1, 2, 3, 4, 5]
+
+head: __HEAD
+tail: __TAIL
+cons: __CONS
+eq: __EQ
+
+h: list head
+one: eq(h, 1)
+t: list tail
+list2: cons(h, t)
+check: eq(list, list2)
+h0: head(cons(list head, list tail))
+h2: list2 head
+h3: head(cons(h, t))
+
+check0: eq(h, h)
+check1: eq(cons(h, t) head, h)
+check2: eq(cons(h, t) tail, t)
