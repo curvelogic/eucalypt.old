@@ -236,7 +236,7 @@ nil?(l): l = []
 ` { doc: "`foldl(op, i, l)` - left fold operator `op` over list `l` starting from value `i` "
     # example: foldl((+), i, [1,2,3]) //=> (((i + 1) + 2) + 3)
     export: :suppress }
-foldl(op, i, l): if(l nil?, i, foldl(op(i,head(l)), tail(l)))
+foldl(op, i, l): if(l nil?, i, foldl(op, op(i, l head), l tail))
 
 ` { doc: "`foldr(op, l, i)` - right fold operator `op` over list `l` ending with value `i` "
     # example: foldr((+), [1,2,3], i) //=> (1 + (2 + (3 + i)))
