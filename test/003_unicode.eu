@@ -2,4 +2,4 @@
 # -*- mode: conf -*-
 
 ` { doc: "`(f ∘ g)` - return composition of `f` and `g`" }
-(f ∘ g): compose(f,g)
+(f ∘ g): compose(f, g)
