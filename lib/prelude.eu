@@ -25,15 +25,17 @@ eu: {
 #
 #
 
+TODO(x): ""
+
 ## Error / debug support
 
-` { doc: "`error(s)` - raise runtime error with message string `s`."
+` { doc: "`panic(s)` - raise runtime error with message string `s`."
     export: :suppress }
-error: __ERROR
+panic: __PANIC
 
 ` { doc: "`trace(v)` - equivalent to `v` but trace execution"
     export: :suppress }
-trace: __TRACE
+trace: TODO(__TRACE)
 
 ## Essentials
 
@@ -60,7 +62,7 @@ tail: __TAIL
 
 ` { doc: "`nil` - identical to `[]`, the empty list."
     export: :suppress }
-nil: __NIL
+nil: []
 
 ` { doc: "`if(c, t, f)` - if `c` is `true`, return `t` else `f`."
     export: :suppress }
@@ -68,31 +70,37 @@ if: __IF
 
 ` { doc: "`cat(a, b)` - explicit catenation, cat(a, b) = a b. Useful in folds etc."
     export: :suppress }
-cat: __CAT
+cat: TODO(__CAT)
 
 ` { doc: "`merge(b1, b2)` - shallow merge block `b2` on top of `b1`."
     export: :suppress }
-merge: __MERGE
+merge: TODO(__MERGE)
 
 ` { doc: "`elements(b)` - expose list of elements of block `b`."
     export: :suppress }
-elements: __ELEMENTS
+elements: TODO(__ELEMENTS)
 
 ` { doc: "`block(l)` - (re)construct block from list `l` of elements."
     export: :suppress }
-block: __BLOCK
+block: TODO(__BLOCK)
 
 ` { doc: "`has(s, b)` - true if and only if block `b` has key (symbol) `s`."
     export: :suppress }
-has(s, b): __HAS(b, s)
+has(s, b): TODO(__HAS(b, s))
 
 ` { doc: "`lookup(s, b)` - look up symbol `s` in block `b`, error if not found."
     export: :suppress }
-lookup(s, b): __LOOKUP(s, b)
+lookup(s, b): TODO(__LOOKUP(s, b))
 
 ` { doc: "`lookup-or(s, d, b)` - look up symbol `s` in block `b`, default `d` if not found."
     export: :suppress }
-lookup-or(s, d, b): __LOOKUPOR(s, d, b)
+lookup-or(s, d, b): TODO(__LOOKUPOR(s, d, b))
+
+## Boolean
+
+` { doc: "`not(b) - toggle boolean.`"
+    export: :suppress }
+not: __NOT
 
 ## Equality
 
@@ -102,38 +110,32 @@ lookup-or(s, d, b): __LOOKUPOR(s, d, b)
 
 ` { doc: "`l != r` - `true` if and only if value `l` is not equal to value `r`."
     export: :suppress }
-(l != r): __NE(l, r)
-
-## Boolean
-
-` { doc: "`not(b) - toggle boolean.`"
-    export: :suppress }
-not: __NOT
+(l != r): not(__EQ(l, r))
 
 ## Arithmetic
 
 ` { doc: "`l < r` - `true` if and only if number `l` is less than number `r`."
     export: :suppress }
-(l < r): __LT(l, r)
+(l < r): TODO(__LT(l, r))
 
 ` { doc: "`l > r` - `true` if and only if number `l` is greater than number `r`."
     export: :suppress }
-(l > r): __GT(l, r)
+(l > r): TODO(__GT(l, r))
 
 ` { doc: "`l <= r` - `true` if and only if number `l` is less than or equal to number `r`."
     export: :suppress }
-(l <= r): __LTE(l, r)
+(l <= r): TODO(__LTE(l, r))
 
 ` { doc: "`l >= r` - `true` if and only if number `l` is breater than or equal to number `r`."
     export: :suppress }
-(l >= r): __GTE(l, r)
+(l >= r): TODO(__GTE(l, r))
 
 ## Text and regexes
 
 ` { doc: "`grok(r, s)` - use regex `r` with named groups to match string `s` and return block of captures."
     example: grok("(?<name>\\w+) (?<value>\\d+)", "foo 123") //=> { name: "foo" value: 123 }
     export: :suppress }
-grok(r, s): __GROK(r, s)
+grok(r, s): TODO(__GROK(r, s))
 
 ## Hashes & Random
 
@@ -141,7 +143,7 @@ grok(r, s): __GROK(r, s)
 
 ` { doc: "`concat(l1, l2)` - concatenate lists `l1` and `l2`."
     export: :suppress }
-concat: __CONCAT
+concat: TODO(__CONCAT)
 
 
 #
@@ -155,7 +157,7 @@ concat: __CONCAT
 ` { doc: "`assert(c, s, v)` - if `c` is true then value `v` otherwise error with message `s`."
     example: { foo: bar assert(bar >= 0, "negative foo") }
     export: :suppress }
-assert(c, s, v): if(c, v, error(s))
+assert(c, s, v): if(c, v, panic(s))
 
 ## Combinators
 
@@ -165,13 +167,12 @@ identity(v): v
 
 ` { doc: "`compose(f,g,x)` - apply function `f` to `g(x)`."
     export: :suppress }
-compose(f,g,x): x g f
+compose(f, g, x): x g f
 
-# TODO: unicode
-# ` { doc: "`(f ∘ g)` - return composition of `f` and `g`"
-#     example: (head ∘ tail)([1,2]) //=> 2
-#     export: :suppress }
-# (f ∘ g): compose(f,g)
+` { doc: "`(f ∘ g)` - return composition of `f` and `g`"
+    example: (head ∘ tail)([1,2]) //=> 2
+    export: :suppress }
+(f ∘ g): compose(f,g)
  
 ` { doc: "`apply(f, l)` - apply function `f` to arguments in list `l`."
     export: :suppress }
@@ -219,11 +220,11 @@ dec(x): x - 1
 
 ` { doc: "`meta e` - retrieve expression metadata for e"
     export: :suppress }
-meta(expr): __META(expr)
+meta(expr): TODO(__META(expr))
 
 ` { doc: "`expr //=> value` - add metadata to expression to assert its value."
     export: :suppress }
-(expr //=> value): __WITHMETA(expr, meta(expr) { assert: value })
+(expr //=> value): TODO(__WITHMETA(expr, meta(expr) { assert: value }))
 
 # List, maps and folds
 
@@ -280,20 +281,12 @@ zip-with: map2
 
 ` { doc: "`zip-apply(fs, vs)` - apply functions in list `fs` to corresponding values in list `vs`, stopping when shorter list is exhausted."
     export: :suppress }
-zip-apply: zip-with(apply1, fs, vs)
+zip-apply(fs, vs): zip-with(apply1, fs, vs)
 
 ` { doc: "`reverse(l) - reverse list `l`"
     example: reverse([1,2,3]) //=> [3,2,1]
     export: :suppress }
 reverse(l): if(l nil?, l, concat(reverse(l), [h(l)]))
-
-# take(n, l): if(l nil?, l, cons(head(l), take(n - 1, tail(l))))
-# drop(n, l): if(l nil?, l, drop(n - 1, tail(l)))
-# ints-from(n): cons(n, map(inc, ints))
-# ints: ints-from(0)
-# range(a, b): ints-from(a) take(b - a)
-# pair(a, b): [a, b]
-# enumerate(l): l map2(pair, ints)
 
 # Blocks
 
@@ -334,7 +327,7 @@ map-first(f, le): map(biapply(f, identity), le)
     export: :suppress }
 map-second(f, le): map(biapply(identity, f), le)
 
-# on-elements(f, b): b elements f block
+on-elements(f, b): b elements f block
 
 ` { doc: "`map-kv(f, b)` - apply `f(k, v)` to each element in block `b`."
     export: :suppress }
