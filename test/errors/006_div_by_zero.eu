@@ -1,7 +1,6 @@
 #!/usr/bin/env eu -B
 # -*- mode: conf -*-
 
-z(s) : s
+(l/r):__DIV(l,r)
 
-# xs free:
-f: z(xs)
+bomb: 1.0 / 0.0
