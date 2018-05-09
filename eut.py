@@ -48,7 +48,7 @@ class Test:
 
         """ Run eucalypt files """
 
-        print(self.id, self.name, sep='\t', end='\t')
+        print(self.id, self.name, sep=' ', end=' ')
 
         if self.ignore:
 

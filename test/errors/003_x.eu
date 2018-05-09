@@ -1,0 +1,7 @@
+#!/usr/bin/env eu -B
+# -*- mode: conf -*-
+
+z(s) : s
+
+# xs free:
+f: z(xs)
