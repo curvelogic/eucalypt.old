@@ -44,6 +44,20 @@ merging: {
       c: ({ a: 1 b: 2 c: 3 d: 4} { b: 1 c: 1 d: 1}) = { a:1 b:1 c:1 d:1 }
     }
   }
+
+  merge: __MERGE
+  merge-with(r, l): merge(l, r)
+  with-tags: merge-with({tags: [:a, :b, :c]})
+
+  m-tagged: m with-tags
+  m2-tagged: m2 with-tags
+  checks: {
+    trues: [
+      m-tagged = { a:2 b:3 tags:[:a, :b, :c]},
+      m2-tagged = { a:3  tags:[:a, :b, :c]}
+    ]
+  }
+
 }
 
 
