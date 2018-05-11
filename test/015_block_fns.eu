@@ -1,4 +1,4 @@
-# -*- mode: conf -*-
+h# -*- mode: conf -*-
 
 # doesn't require prelude; uses builtins only
 
@@ -43,5 +43,47 @@ merging: {
       b: ({ a: 2 } { a: 3 }) = { a: 3 }
       c: ({ a: 1 b: 2 c: 3 d: 4} { b: 1 c: 1 d: 1}) = { a:1 b:1 c:1 d:1 }
     }
+  }
+}
+
+
+lookups: {
+
+  page1: {
+    title: "page one"
+    body: "blah blah"
+  }
+
+  page2: {
+    title: "page three"
+    body: "blah blah"
+  }
+
+  page3: {
+    title: "page thre"
+    body: "blah blah"
+    epilogue: "."
+  }
+
+  lookup: __LOOKUP
+  lookup-or: __LOOKUPOR
+  head: __HEAD
+  tail: __TAIL
+  map(f, l): if(l nil?, l, cons(l head f, l tail map(f)))
+
+  pages: [page1, page2, page3]
+
+  title: lookup(:title)
+  epilogue: lookup-or(:epilogue, "∅")
+
+  titles: pages map(title)
+  epilogues: pages map(epilogue)
+
+  checks: {
+    trues: [
+      titles = ["page one", "page two", "page three"],
+      epilogues = ["∅", "∅", "."],
+      pages map(lookup(:title)) = pages map(lookup("title"))
+    ]
   }
 }

@@ -84,17 +84,13 @@ elements: __ELEMENTS
     export: :suppress }
 block: __BLOCK
 
-` { doc: "`has(s, b)` - true if and only if block `b` has key (symbol) `s`."
-    export: :suppress }
-has(s, b): TODO(__HAS(b, s))
-
 ` { doc: "`lookup(s, b)` - look up symbol `s` in block `b`, error if not found."
     export: :suppress }
-lookup(s, b): TODO(__LOOKUP(s, b))
+lookup(s, b): __LOOKUP(s, b)
 
 ` { doc: "`lookup-or(s, d, b)` - look up symbol `s` in block `b`, default `d` if not found."
     export: :suppress }
-lookup-or(s, d, b): TODO(__LOOKUPOR(s, d, b))
+lookup-or(s, d, b): __LOOKUPOR(s, d, b)
 
 ## Boolean
 
