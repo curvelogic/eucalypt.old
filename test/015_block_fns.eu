@@ -1,4 +1,4 @@
-h# -*- mode: conf -*-
+# -*- mode: conf -*-
 
 # doesn't require prelude; uses builtins only
 
