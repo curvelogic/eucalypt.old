@@ -1,0 +1,36 @@
+#!/usr/bin/env eu -B
+# -*- mode: conf -*-
+
+split: __SPLIT
+split-on(re, s): split(s, re)
+
+numbers: "1 2 3 4 5 6 7 8 9 10"
+n-1: split("1 2 3 4 5 6 7 8 9 10", "\s+")
+n-2: "1 2 3 4 5 6 7 8 9 10" split-on("\s+")
+
+version: "1.2.3.4" split-on("\.")
+
+match-with-anything: "asdf" split-on(".")
+match-with-empty: "asdf" split-on("")
+
+checks: {
+  trues: [
+    n-1 = n-2,
+    match-with-anything = [],
+    match-with-empty = ["asdf"]
+  ]
+}
+
+join: __JOIN
+join-on(sep, l): join(l, sep)
+
+items: ["9", "8", "7", "6"]
+joined: items join-on("<->")
+squished: items join-on("")
+
+checks2: {
+  trues: [
+    joined = "9<->8<->7<->6",
+    squished = "9876"
+  ]
+}
