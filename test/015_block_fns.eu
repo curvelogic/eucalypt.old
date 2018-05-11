@@ -74,7 +74,7 @@ lookups: {
   pages: [page1, page2, page3]
 
   title: lookup(:title)
-  epilogue: lookup-or(:epilogue, "∅")
+  epilogue: lookup-or(:epilogue, "x")
 
   titles: pages map(title)
   epilogues: pages map(epilogue)
@@ -82,7 +82,7 @@ lookups: {
   checks: {
     trues: [
       titles = ["page one", "page two", "page three"],
-      epilogues = ["∅", "∅", "."],
+      epilogues = ["x", "x", "."],
       pages map(lookup(:title)) = pages map(lookup("title"))
     ]
   }
