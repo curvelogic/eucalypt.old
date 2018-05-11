@@ -55,12 +55,12 @@ lookups: {
   }
 
   page2: {
-    title: "page three"
+    title: "page two"
     body: "blah blah"
   }
 
   page3: {
-    title: "page thre"
+    title: "page three"
     body: "blah blah"
     epilogue: "."
   }
