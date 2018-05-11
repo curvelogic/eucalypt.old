@@ -2,3 +2,5 @@
 # -*- mode: conf -*-
 
 n: null
+b: dec(3)
+a: 3 + 5

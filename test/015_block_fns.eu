@@ -1,0 +1,47 @@
+# -*- mode: conf -*-
+
+# doesn't require prelude; uses builtins only
+
+(l=r): __EQ(l, r)
+cons(l, r): __CONS(l, r)
+block(l): __BLOCK(l)
+elements(b): __ELEMENTS(b)
+
+block1: {
+  k: 1
+  z: "hello"
+  bibble-wibble: :a
+}
+
+block2: block1
+
+items: block2 elements
+
+block3: items block
+
+block4: cons([:x, 9999], items) block
+
+block5: [[:x, 9999], [:k, 1], [:z, "hello"], [:bibble-wibble, :a]] block
+
+checks: {
+  trues: {
+    a: block3=block2
+    b: ({ a: 1 } elements block) = { a: 1 }
+    c: block5=block5
+  }
+}
+
+
+merging: {
+  m: { a: 2 } { b: 3 }
+  m2: ({ a: 2 } { a: 3 })
+  a: m.a
+  a2: m2.a
+  checks: {
+    trues: {
+      a: ({ a: 2 } { b: 3 }) = { a: 2 b: 3 }
+      b: ({ a: 2 } { a: 3 }) = { a: 3 }
+      c: ({ a: 1 b: 2 c: 3 d: 4} { b: 1 c: 1 d: 1}) = { a:1 b:1 c:1 d:1 }
+    }
+  }
+}

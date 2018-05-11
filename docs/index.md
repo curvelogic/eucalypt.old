@@ -3,32 +3,34 @@
 
 {% raw %}
 
-<span style="color: red; font-weight: bold"> Most of this does not yet
-exist. It is here to act like a product specification guiding
-development. It is highly subject to change and perpetually at risk of
-destruction. In short, go away and come back later. </span>
+<span style="color: red; font-weight: bold"> Much of this does not yet
+exist. The introduction is here to act like a product specification,
+guiding development. It is highly subject to change and perpetually at
+risk of destruction. In short, go away and come back later. </span>
 
-Eucalypt is a small declarative language for working with structured
-data formats like YAML and JSON.
+Eucalypt is a tool, and a small language, for generating and
+transforming structured data formats like YAML and JSON.
 
-Anywhere you currently use text-based templating to process these
-formats or anywhere where you're piping this content through several
-different tools or build steps - that’s probably a place where
-Eucalypt can help you generate your output more cleanly and with fewer
-cognitive somersaults.
+If you currently use text-based templating to process these formats or
+you pipe this these formats through several different tools or build
+steps - Eucalypt can help you generate your output more cleanly and
+with fewer cognitive somersaults.
 
-Eucalypt is a simple, purely functional language that can be used
-quickly and easily from the command line or as a library from within
-several popular languages.
+Eucalypt is a purely functional language that can be used quickly and
+easily from the command line.
 
 It has the following features:
-  1. a native syntax that makes common transformations succint and
-	 cut-down expression syntax for embedding in YAML files
-  2. strong text manipulation capabilities including built-in "grok"
+  - a native syntax that makes common transformations succint and
+	 allows you to define data, functions, operators and more
+  - a cut-down expression syntax for embedding in YAML files using
+	 tags
+  - facilities for manipulating blocks (think JSON objects, YAML
+	 mappings)
+  - facilities for manipulating text including built-in "grok"
 	 operators, regular expressions and interpolation
-  3. an ergonomic command line interface and access to environment
+  - an ergonomic command line interface and access to environment
 	 variables, filesystem, URLs
-  4. metadata annotations and numerous extension points
+  - metadata annotations and numerous extension points
 
 If you're generating or processing YAML or JSON, you should give it a
 try.
@@ -60,11 +62,11 @@ In this example, `map` is just a two-parameter function. Its first
 argument is provided in parentheses and its second argument comes from
 the preceding list.
 
-Users of languages like Elixir or OCaml may recognise an implicit `|>`
-operator here. Clojure users may see an invisible threading macro.
-Note that writing elements next to each other like this gives you the
-_reverse_ of what you might expect in Haskell or OCaml: we write `x f`
-(or `f(x)`), *not* `f x`.
+> Users of languages like Elixir or OCaml may recognise an implicit `|>`
+> operator here. Clojure users may see an invisible threading macro.
+> Note that writing elements next to each other like this gives you the
+> _reverse_ of what you might expect in Haskell or OCaml: we write `x f`
+> (or `f(x)`), *not* `f x`.
 
 The string template, `"eu-west-1{{%}}"`, defines a function of one
 argument, returning a string. The key ingredients here are the
@@ -72,10 +74,10 @@ interpolation syntax `{{...}}` which allows values to be inserted to
 the string, and the string anaphora "%" which represents a single
 parameter when used in a string literal.
 
-Users of Groovy or Kotlin may recognise an equivalent of the `it`
-parameter. Lisp hackers are familiar with anaphoric macros. Clojure
-users will recognise the `%`, `%1`, `%2` forms usable in `#(...)`
-contexts.
+> Users of Groovy or Kotlin may recognise an equivalent of the `it`
+> parameter. Lisp hackers are familiar with anaphoric macros. Clojure
+> users will recognise the `%`, `%1`, `%2` forms usable in `#(...)`
+> contexts.
 
 The whole line is a **declaration**.
 
@@ -105,6 +107,14 @@ backtick and the declaration itself:
 ```eu
 ` “AZs to deploy alien widgets in”
 target-zones: [“a”, “b”, “c”] map(“eu-west-1{{%}}”)
+```
+
+Also, while we're looking at the native Eucalypt syntax here, we
+should note that this example can also be embedded directly in a YAML
+file using the `!eu` tag:
+
+```yaml
+target-zones: !eu ["a", "b", "c"] map("eu-west-1{{%}}")
 ```
 
 Let's look at another small example:
