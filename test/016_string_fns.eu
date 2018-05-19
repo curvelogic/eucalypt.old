@@ -34,3 +34,23 @@ checks2: {
     squished = "9876"
   ]
 }
+
+
+match: __MATCH
+match-with(re, s): match(s, re)
+
+
+checks3: {
+  parse-ip: match-with("(\d+)\.(\d+)\.(\d+)\.(\d+)")
+  ip-components: "192.168.0.1" parse-ip tail
+
+  trues: [ip-components = ["192", "168", "0", "1"]]
+}
+
+matches: __MATCHES
+matches-of(re, s): matches(s, re)
+
+checks4: {
+  ip-components: "192.168.0.1" matches-of("\d+")
+  trues: [ip-components = ["192", "168", "0", "1"]]
+}

@@ -1,0 +1,33 @@
+# -*- mode: conf -*-
+
+
+with-meta: __WITHMETA
+(v // m): v with-meta(m)
+(v //=> e): v with-meta({ assert: __EQ(e)})
+(v //=? f): v with-meta({ assert: f})
+
+meta: __META
+lookup: __LOOKUP
+lookup-or: __LOOKUPOR
+and: __AND
+true: __TRUE
+
+k: 1 // { note: "this is one" }
+k2: (1 + 1) // { note: "this is two" }
+
+note(v): meta(v) lookup-or(:note, "")
+
+checks: {
+  trues: [
+    note(k) = "this is one",
+    note(k2) = "this is two"
+  ]
+}
+
+
+assertions: {
+  a1: foldl(and, true, checks.trues) //=> true
+  a1meta: meta(a1)
+}
+
+test: (1 + 1) //=> 2

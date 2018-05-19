@@ -19,7 +19,7 @@ param(desc, type): {
   Type: type 
 }
 
-` "AWS entity types"
+` { doc: "AWS entity types" export: :suppress }
 type: {
   vpc: "AWS::EC2::VPC"
   subnet: "AWS::EC2::Subnet"
@@ -30,12 +30,13 @@ type: {
   string: "String"
 }
 
-` "Basic VPC block for customisation"
+` { doc: "Basic VPC block for customisation" export: :suppress }
 base-vpc: {
   Type: type.vpc
   Properties: {}
 }
 
+` { doc: "Basic subnet for customisation" export: :suppress }
 base-subnet(vpc, az, cidr, public-ip): {
   Type: type.subnet
   Properties: {
@@ -43,51 +44,55 @@ base-subnet(vpc, az, cidr, public-ip): {
   }
 }
 
-base-igw(tags): {
+` { doc: "Basic IGW for customisation" export: :suppress }
+base-igw: {
   Type: type.igw
 }
 
-tagged(tags, block):
-  block {
+tagged(tags, b):
+  b {
     Properties: { Tags: tags }
   }
 
-ref(label): {
-  'Fn::Ref': label
+` "All the Fn:: incantations we might need"
+fn: {
+  ref(label): {
+    'Fn::Ref': label
+  }
+
+  ` "CloudFormation fn to join with char"
+  join(char, vals): {
+    'Fn::Join': [char, vals]
+  }
+
+  ` "CloudFormation fn to join without intervening char"
+  cat(vals): {
+    'Fn::Join': ["", vals]
+  }
 }
 
-` "CloudFormation fn to join with char"
-join(char, vals): {
-  'Fn::Join': [char, vals]
-}
 
-` "CloudFormation fn to join without intervening char"
-cat(vals): {
-  'Fn::Join': ["", vals]
-}
-
-` "!!TODO"
-to-tags(block): {
-}
+as-tag(item): { Key: item key Value: item value }
+to-tags(b): b elements map(as-tag)
 
 # Template
 
+` :suppress
 refs: {
-  env: ref("EnvironmentName")
+  env: fn.ref("EnvironmentName")
 }
 
 ` "A basic tag map for any entity. Invoke to-tags once merged with other"
 tagmap(suffix): {
-  Name: [refs.env, suffix] cat
+  Name: [refs.env, suffix] fn.cat
   Environment: refs.env
 }
 
+` :suppress
 region: "eu-west-1"
 
-zones:
-  ["a", "b", "c"]
-  map(strcat(region))
-    //=> ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+` :suppress
+zones: ["a", "b", "c"] map(str.prepend(region))
 
 ` "Our VPC"
 vpc: base-vpc {
@@ -101,7 +106,7 @@ vpc: base-vpc {
 }
 
 ` "An internet gateway with tags"
-igw: base-igw tagged(tag-map("IGW") to-tags)
+igw: base-igw tagged(tagmap("IGW") to-tags)
 
 ` :todo
 dmz-cidr(az): {
@@ -109,33 +114,31 @@ dmz-cidr(az): {
 
 dmz-subnet(az):
   base-subnet(vpc, az, dmz-cidr(az), true)
-  tagged(tag-map(strcat("Subnet", az)) to-tags)
+  tagged(tagmap("Subnet" str.append(az)) to-tags)
 
-dmz-name(az): sym(strcat("OurDMZSubnet", az))
+dmz-name(az): "OurDMZSubnet" str.append(az) sym
 
 dmz-subnets:
   zip-kv(zones map(dmz-name),
          zones map(dmz-subnet)) 
 
-# `target` metadata specifies a named entrypoint
-` { doc: "The final template" target: "vpc" }
-template:
-  base-template("A virtual private cloud")
+check: dmz-subnets
+
+# ` { doc: "The final template" target: "vpc" }
+# template:
+#   base-template("A virtual private cloud")
   
-  {
-    Parameters: {
-      KeyPair: param("Key pair to use", type.key)
-      EnvironmentName: param("Environment name", type.string)
-    }
-  }
+#   {
+#     Parameters: {
+#       KeyPair: param("Key pair to use", type.key)
+#       EnvironmentName: param("Environment name", type.string)
+#     }
+#   }
   
-  {
-    Resources: {
-      OurVPC: vpc
-      OurInternetGateway: igw
-      # TODO: possible?:
-      OurVPCGatewayAttachment: attach(OurVPC, OurInternetGateway)
-      # splice in subnets TODO: syntax
-      ~ dmz-subnets
-    }
-  }
+#   {
+#     Resources: {
+#       OurVPC: vpc
+#       OurInternetGateway: igw
+#       # OurVPCGatewayAttachment: attach(OurVPC, OurInternetGateway)
+#     } dmz-subnets
+#   }

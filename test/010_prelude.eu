@@ -1,6 +1,7 @@
 #!/usr/bin/env eu -B
 # -*- mode: conf -*-
 
+s: sym("hello")
 n: null
 b: dec(3)
 a: 3 + 5

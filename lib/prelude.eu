@@ -17,17 +17,23 @@ eu: {
     # implementation: __IMPL
   }
 }
-  
 
-#
-#
-# Built-ins
-#
-#
+` { doc: "IO related declarations"
+    export: :suppress }
+io: {
+  ` "Read access to environent variables at time of launch"
+  env: __io.ENV
+
+  epoch-time: __io.EPOCHTIME
+}
+
+
 
 TODO(x): ""
 
+##
 ## Error / debug support
+##
 
 ` { doc: "`panic(s)` - raise runtime error with message string `s`."
     export: :suppress }
@@ -37,11 +43,30 @@ panic: __PANIC
     export: :suppress }
 trace: TODO(__TRACE)
 
+` { doc: "`assert(c, s, v)` - if `c` is true then value `v` otherwise error with message `s`."
+    example: { foo: bar assert(bar >= 0, "negative foo") }
+    export: :suppress }
+assert(c, s, v): if(c, v, panic(s))
+
+##
 ## Essentials
+##
 
 ` { doc: "A null value. To export as `null` in JSON or ~ in YAML."
     export: :suppress }
 null: __NULL
+
+` { doc: "`cat(a, b)` - explicit catenation, cat(a, b) = a b. Useful in folds etc."
+    export: :suppress }
+cat: TODO(__CAT)
+
+` { doc: "`if(c, t, f)` - if `c` is `true`, return `t` else `f`."
+    export: :suppress }
+if: __IF
+
+##
+## List basics
+##
 
 ` { doc: "`cons(h, t)` - construct new list by prepending item `h` to list `t`."
     example: cons(0,[1,2]) //=> [0,1,2]
@@ -52,9 +77,9 @@ cons: __CONS
     export: :suppress }
 head: __HEAD
 
-` { doc: "`head-or(l, d)` - return the head item of list `l` or default `d` if empty."
-    export: :suppress }
-head-or: TODO(__HEADOR)
+# ` { doc: "`head-or(l, d)` - return the head item of list `l` or default `d` if empty."
+#     export: :suppress }
+# head-or: __HEADOR
 
 ` { doc: "`tail(l)` - return list `l` without the head item. [] causes error."
     export: :suppress }
@@ -64,13 +89,13 @@ tail: __TAIL
     export: :suppress }
 nil: []
 
-` { doc: "`if(c, t, f)` - if `c` is `true`, return `t` else `f`."
-    export: :suppress }
-if: __IF
+##
+## Blocks / merge
+##
 
-` { doc: "`cat(a, b)` - explicit catenation, cat(a, b) = a b. Useful in folds etc."
+` { doc: "`sym(s)` - create symbol with name given by string `s`."
     export: :suppress }
-cat: TODO(__CAT)
+sym: __SYM
 
 ` { doc: "`merge(b1, b2)` - shallow merge block `b2` on top of `b1`."
     export: :suppress }
@@ -84,6 +109,10 @@ elements: __ELEMENTS
     export: :suppress }
 block: __BLOCK
 
+` { doc: "`has(s, b)` - true if and only if block `b` has key (symbol) `s`."
+    export: :suppress }
+has(s, b): TODO(__HAS(b, s))
+
 ` { doc: "`lookup(s, b)` - look up symbol `s` in block `b`, error if not found."
     export: :suppress }
 lookup(s, b): __LOOKUP(s, b)
@@ -92,13 +121,33 @@ lookup(s, b): __LOOKUP(s, b)
     export: :suppress }
 lookup-or(s, d, b): __LOOKUPOR(s, d, b)
 
+##
 ## Boolean
+##
 
 ` { doc: "`not(b) - toggle boolean.`"
     export: :suppress }
 not: __NOT
 
-## Equality
+` { doc: "`l && r`` - true if and only if `l` and `r`"
+    export: :suppress }
+(l && r): __AND(l, r)
+
+` { doc: "`l ∧ r`` - true if and only if `l` and `r`"
+    export: :suppress }
+(l ∧ r): l && r
+
+` { doc: "`l || r`` - true if and only if `l` or `r`"
+    export: :suppress }
+(l || r): __OR(l, r)
+
+` { doc: "`l ∨ r`` - true if and only if `l` or `r`"
+    export: :suppress }
+(l ∨ r): l || r
+
+##
+## Polymorphic equality
+##
 
 ` { doc: "`l = r` - `true` if and only if value `l` equals value `r`."
     export: :suppress }
@@ -108,7 +157,9 @@ not: __NOT
     export: :suppress }
 (l != r): not(__EQ(l, r))
 
+##
 ## Arithmetic
+##
 
 ` { doc: "`l + r` - adds `l` and `r`; both must be numbers."
     export: :suppress }
@@ -138,40 +189,81 @@ not: __NOT
     export: :suppress }
 (l <= r): __LTE(l, r)
 
-` { doc: "`l >= r` - `true` if and only if number `l` is breater than or equal to number `r`."
+` { doc: "`l >= r` - `true` if and only if number `l` is greater than or equal to number `r`."
     export: :suppress }
 (l >= r): __GTE(l, r)
 
+` { doc: "`inc(x)` - increment number `x` by 1."
+    export: :suppress }
+inc(x): x + 1
+
+` { doc: "`dec(x)` - decrement number `x` by 1."
+    export: :suppress }
+dec(x): x - 1
+
+` { doc: "`zero?(n)` - return true if and only if integer `n` is 0."
+    export: :suppress }
+zero?(n): n = 0
+
+##
 ## Text and regexes
+##
 
-` { doc: "`grok(r, s)` - use regex `r` with named groups to match string `s` and return block of captures."
-    example: grok("(?<name>\\w+) (?<value>\\d+)", "foo 123") //=> { name: "foo" value: 123 }
-    export: :suppress }
-grok(r, s): TODO(__GROK(r, s))
+` :suppress
+str: {
 
-## Hashes & Random
+  ` { doc: "of(e) - convert `e` to string."
+      export: :suppress }
+  of: __STR
 
-## Builtins for optimsation
+  ` { doc: "split(s, re) - split string `s` on separators matching regex `re`."
+      export: :suppress }
+  split: __SPLIT
 
-` { doc: "`concat(l1, l2)` - concatenate lists `l1` and `l2`."
-    export: :suppress }
-concat: TODO(__CONCAT)
+  ` { doc: "split-on(re, s) - split string `s` on separators matching regex `re`."
+      export: :suppress }
+  split-on: split flip
 
+  ` { doc: "join(l, s) - join list of strings `l` by interposing string s."
+      export: :suppress }
+  join: __JOIN
 
-#
-#
-# Prelude implementations
-#
-#
+  ` { doc: "join-on(s, l) - join list of strings `l` by interposing string s."
+      export: :suppress }
+  join-on: join flip
 
-## Errors / debug support
+  ` { doc: "match(s, re) - match string `s` using regex `re`, return list of full match then capture groups."
+      export: :suppress }
+  match: __MATCH
 
-` { doc: "`assert(c, s, v)` - if `c` is true then value `v` otherwise error with message `s`."
-    example: { foo: bar assert(bar >= 0, "negative foo") }
-    export: :suppress }
-assert(c, s, v): if(c, v, panic(s))
+  ` { doc: "match-with(re, s) - match string `s` using regex `re`, return list of full match then capture groups."
+      export: :suppress }
+  match-with: match flip
 
+  ` { doc: "matches(s, re) - return list of all matches in string `s` of regex `re`."
+      export: :suppress }
+  matches: __MATCHES
+
+  ` { doc: "matches-of(re, s) - return list of all matches in string `s` of regex `re`."
+      export: :suppress }
+  matches-of: matches flip
+
+  ` { doc: "match(s, re) - match string `s` using regex `re`, return list of full match then capture groups."
+      export: :suppress }
+  matches?(re): match(s, re) (not ∘ nil?)
+
+  ` { doc: "append(b, a) - return string `b` appended to `a`."
+      export: :suppress }
+  append(b, a): [a, b] join-on("")
+
+  ` { doc: "append(b, a) - return string `b` prepended to `a`."
+      export: :suppress }
+  prepend(b, a): [b, a] join-on("")
+}
+
+##
 ## Combinators
+##
 
 ` { doc: "`identity(v)` - identity function, return value `v`."
     export: :suppress }
@@ -208,41 +300,44 @@ second(l): l tail head
 
 ` { doc: "`uncurry(f)` - turn f(x, y) into f' that expects [x, y] as a list."
     export: :suppress }
-uncurry(f, x, y): f([x, y])
+curry(f, x, y): f([x, y])
 
 ` { doc: "`uncurry(f)` - turn f(x, y) into f' that expects [x, y] as a list."
     export: :suppress }
-curry(f, l): f(first(l), second(l))
+uncurry(f, l): f(first(l), second(l))
 
 ` { doc: "`cond(l)` - in list `l` of [condition, value] select first true condition and return coresponding vaue. Default `d` if none."
     export: :suppress }
 cond(l, d): foldr(l, curry(if), d)
 
-# Arithmetic
+#
+# Metadata basic
+#
 
-` { doc: "`inc(x)` - increment number `x` by 1."
+` { doc: "`with-meta m e` - add metadata block `m` to expression `e`."
     export: :suppress }
-inc(x): x + 1
+with-meta: __WITHMETA
 
-` { doc: "`dec(x)` - decrement number `x` by 1."
+` { doc: "`e // m` - add metadata block `m` to expression `e`."
     export: :suppress }
-dec(x): x - 1
-
-` { doc: "`zero?(n)` - return true if and only if integer `n` is 0."
-    export: :suppress }
-zero?(n): n = 0
-
-# Metadata
+(e // m): v with-meta(m)
 
 ` { doc: "`meta e` - retrieve expression metadata for e"
     export: :suppress }
-meta(expr): TODO(__META(expr))
+meta: __META
 
-` { doc: "`expr //=> value` - add metadata to expression to assert its value."
+` { doc: "`e //=> v` - add metadata to assert expression `e` evaluates to `v` and return value of `e`."
     export: :suppress }
-(expr //=> value): TODO(__WITHMETA(expr, meta(expr) { assert: value }))
+(e //=> v): e with-meta({ assert: __EQ(v)})
 
-# List, maps and folds
+` { doc: "`e //=? f` - add metadata to assert expression `e` satisfies function `f` and return value of `e`."
+    export: :suppress }
+(e //=? f): e with-meta({ assert: f})
+
+
+#
+# List library functions, maps and folds
+#
 
 ` { doc: "`nil?(l)` - `true` if list `l` is empty, `false` otherwise."
     example: nil?([1]) //=> false
@@ -288,7 +383,7 @@ map(f, l): if(l nil?, l, cons(l head f, l tail map(f)))
 ` { doc: "`map(f, l1, l2)` - map function `f` over lists `l1` and `l2`, stopping when the shorter list is exhausted."
     # example: map2(|x, y|(x+y),[1,2,3],[1,2]) //=> [2,4]
     export: :suppress }
-map2(f, l1, l2): if(l nil?, l, cons(f(head(l)), map(f(tail(l)))))
+map2(f, l1, l2): if(nil?(l1) || nil?(l2), [], cons(f(l1 head, l2 head), map2(f, l1 tail, l2 tail)))
 
 ` { doc: "`cons-if(p?, x, l)` - cons `x` onto beginning of list `l` if it satisfies predicate `p?`."
     export: :suppress }
@@ -314,24 +409,18 @@ zip-with: map2
 zip-apply(fs, vs): zip-with(apply1, fs, vs)
 
 ` { doc: "`reverse(l) - reverse list `l`"
-    example: reverse([1,2,3]) //=> [3,2,1]
+    # example: reverse([1,2,3]) //=> [3,2,1]
     export: :suppress }
 reverse(l): if(l nil?, l, concat(reverse(l), [h(l)]))
 
-# Blocks
+#
+# Block library functions
+#
 
 ` { doc: "`merge-all(bs)` - merge all blocks in list `bs` together, later overriding earlier."
-    example: merge-all([{a: 1}, {b: 2}, {a: 3}]) //=> { b: 2 a: 3 } }
+    # example: merge-all([{a: 1}, {b: 2}, {a: 3}]) //=> { b: 2 a: 3 }
+    }
 merge-all(bs): foldl(merge, {}, bs)
-
-# Text and strings
-
-` { doc: "`s %% r` - grok string `s` using regex `r`. See `grok`."
-    example: "foo 123" %% "(?<name>\\w+) (?<value>\\d+)" //=> { name: "foo" value: 123 }
-    export: :suppress } 
-(s %% r): grok(r, s)
-
-# Blocks
 
 ` { doc: "`key(el)` - return key in a block element."
     export: :suppress }
@@ -353,15 +442,24 @@ map-first(f, le): map(bimap(f, identity), le)
     export: :suppress }
 map-second(f, le): map(bimap(identity, f), le)
 
+` { doc: "`on-elements(f, b)` - apply f to each elements of block `b`."
+    export: :suppress }
 on-elements(f, b): b elements f block
 
 ` { doc: "`map-kv(f, b)` - apply `f(k, v)` to each element in block `b`."
     export: :suppress }
 map-kv(f, b): b elements map(uncurry(f)) block
 
+` { doc: "`pair(k, v)` - form a block element from key (symbol) `k` and value `v`."
+    export: :suppress }
+pair(k, v): [k, v]
+
 ` { doc: "`zip-kv(ks, ,vs)` - create a block by zipping together keys `ks` and values `vs`."
     export: :suppress }
 zip-kv(ks, vs): zip-with(pair, ks, vs) block
+
+` :alias
+with-keys: zip-kv
 
 ` { doc: "`map-keys(f, b)` - apply `f(v)` to each value in block `b`."
     export: :suppress }
@@ -370,24 +468,3 @@ map-values(f, b): b elements map-second(f) block
 ` { doc: "`map-keys(f, b)` - apply `f(k)` to each key in block `b`."
     export: :suppress }
 map-keys(f, b): b elements map-first(f) block
-
-` { doc: "Namespace `merge`, various block merges." 
-    export: :suppress }
-merge: {
-
-  # TODO: direct block access
-  # ` { doc: "`merge.with(f, b1, b2)` - merge blocks b1, b2 as normal but using value f(b1, b2) where both blocks have a value." }
-  # with(f, b1, b2): {
-  #   m: b1 b2
-  #   presence(k): [b1 b2] map(has(k))
-  #   val(k, v): { p: presence(k)
-  #                v: cond([[p = [true, false], b1 lookup(k)],
-  #                         [p = [false, true], b2 lookup(k)],
-  #                         [p = [true, true], f(b1, b2)]],
-  #                         error("spurious key {{k}} in merge-with")) }.v
-  #   ret: m map-kv(val)
-  # }.ret
-
-  # ` { doc: "`merge.deep(b1, b2)` - deep merge blocks `b1`, `b2`" }
-  # deep(b1, b2): with(deep, b1, b2)
-}
