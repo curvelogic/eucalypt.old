@@ -6,6 +6,8 @@ eut.py - A test harness for Eucalypt implementations.
 import subprocess
 import sys
 import re
+import timeit
+import argparse
 from enum import Enum
 from pathlib import (Path)
 
@@ -44,6 +46,15 @@ class Test:
     def check(self):
         return self.proc.returncode == 0
 
+    def execute(self):
+        with open(self.outfile, "wb") as out:
+            with open(self.errfile, "wb") as err:
+                proc = subprocess.run(self.eu_args,
+                                      stdout=out,
+                                      stderr=err)
+        self.proc = proc
+
+
     def run(self):
 
         """ Run eucalypt files """
@@ -56,14 +67,7 @@ class Test:
             print("ignore")
 
         else:
-
-            with open(self.outfile, "wb") as out:
-                with open(self.errfile, "wb") as err:
-                    proc = subprocess.run(self.eu_args,
-                                          stdout=out,
-                                          stderr=err)
-
-            self.proc = proc
+            self.execute()
 
             if self.check():
                 print("pass")
@@ -77,6 +81,22 @@ class Test:
                 self.result = Result.FAIL
 
         return self
+
+    def bench(self, repeats):
+
+        """ Time repeated runs. """
+
+        if self.ignore:
+            return
+
+        print(self.id, self.name, sep=' ', end=' ')
+
+        self.sec = timeit.timeit(self.execute, number=repeats)
+
+        print(f"{self.sec}s")
+
+        return self
+
 
 class ErrorTest(Test):
 
@@ -95,15 +115,25 @@ def find_simple_tests():
 def find_error_tests():
     return [ErrorTest(p) for p in sorted(test_directory.glob("errors/*.eu"))]
 
-def main(args):
+parser = argparse.ArgumentParser("Eucalypt test harness")
+parser.add_argument("-b", "--bench", action='store_true', default=False)
+parser.add_argument("-n", "--repeats", action='store', type=int, default=100)
+
+def main():
+    opts = parser.parse_args()
     prepare_directories()
     tests = find_simple_tests() + find_error_tests()
-    results = [t.run() for t in tests]
-    if any(r.failed() for r in results):
-        print("FAIL")
-        return 1
+
+    if opts.bench:
+        print(f"Timing tests with {opts.repeats} repeats.")
+        results = [t.bench(opts.repeats) for t in tests]
     else:
-        return 0
+        results = [t.run() for t in tests]
+        if any(r.failed() for r in results):
+            print("FAIL")
+            return 1
+        else:
+            return 0
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv))
+    main()
