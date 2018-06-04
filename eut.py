@@ -17,7 +17,6 @@ output_directory = Path(".build/output")
 def prepare_directories():
     if not test_directory.is_dir():
         raise RuntimeError("Cannot locate test directory")
-    output_directory.mkdir(parents = True, exist_ok = True)
 
 class Result(Enum):
     SUCCESS = 1
@@ -36,8 +35,10 @@ class Test:
         self.ignore = ignore == 'x'
         self.id = id
         self.name = name
-        self.outfile = output_directory / filepath.with_suffix(".out").name
-        self.errfile = output_directory / filepath.with_suffix(".err").name
+        self.outfile = output_directory / filepath.relative_to(test_directory).with_suffix(".out")
+        self.outfile.parent.mkdir(parents = True, exist_ok = True)
+        self.errfile = output_directory / filepath.relative_to(test_directory).with_suffix(".err")
+        self.errfile.parent.mkdir(parents = True, exist_ok = True)
         self.eu_args = ["eu", "-B", filepath]
 
     def failed(self):
