@@ -1,0 +1,77 @@
+# -*- mode: conf -*-
+
+` { associates: :left
+    precedence: :sum }
+(x + y): __ADD(x, y)
+
+` { associates: :left
+    precedence: :sum }
+(x - y): __SUB(x, y)
+
+` { associates: :left
+    precedence: :prod }
+(x * y): __MUL(x, y)
+
+` { associates: :left
+    precedence: :prod }
+(l / r): __DIV(l, r)
+
+` { associates: :left
+    precedence: :eq}
+(l = r): __EQ(l, r)
+
+` { associates: :left
+    precedence: :bool}
+(l && r): __AND(l, r)
+
+` { associates: :left
+    precedence: :bool}
+(l || r): __OR(l, r)
+
+` { associates: :left
+    precedence: :cmp}
+(l > r): __GT(l, r)
+
+` { associates: :left
+    precedence: :cmp}
+(l < r): __LT(l, r)
+
+` { associates: :left
+    precedence: :cmp}
+(l >= r): __GTE(l, r)
+
+` { associates: :left
+    precedence: :cmp}
+(l <= r): __LTE(l, r)
+
+` { associates: :right
+    precedence: :prod}
+(l -> r): ["(", str.of(l), "->", str.of(r), ")"] str.join-on(" ")
+
+` { associates: :left
+    precedence: :prod}
+(l <- r): ["(", str.of(l), "<-", str.of(r), ")"] str.join-on(" ")
+
+
+checks: {
+  _a: 1 + 2 + 3 = 6
+  _b: 6 - 3 - 2 = 1
+  _c: 6 - (3 - 2) = 5
+  _d: 1 + 2 * 3 = 7
+
+  rarr_act: "a" -> "b" -> "c"
+  rarr_exp: "( a -> ( b -> c) )"
+
+  larr_act: "a" <- "b" <- "c"
+  larr_exp: "( ( a <- b ) <- c )"
+
+
+  trues: [
+	  _a,
+	  _b,
+	  _c,
+	  _d,
+	  rarr_act = rarr_exp,
+	  larr_act = larr_exp
+	  ]
+}

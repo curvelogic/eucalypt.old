@@ -8,7 +8,7 @@ exist. The introduction is here to act like a product specification,
 guiding development. It is highly subject to change and perpetually at
 risk of destruction. In short, go away and come back later. </span>
 
-Eucalypt is a tool, and a small language, for generating and
+Eucalypt is a tool, and a little language, for generating and
 transforming structured data formats like YAML and JSON.
 
 If you currently use text-based templating to process these formats or
@@ -22,7 +22,7 @@ easily from the command line.
 It has the following features:
   - a native syntax that makes common transformations succint and
 	 allows you to define data, functions, operators and more
-  - a cut-down expression syntax for embedding in YAML files using
+  - a lightweight expression syntax for embedding in YAML files using
 	 tags
   - facilities for manipulating blocks (think JSON objects, YAML
 	 mappings)
@@ -35,7 +35,7 @@ It has the following features:
 If you're generating or processing YAML or JSON, you should give it a
 try.
 
-# A lighting tour of the native syntax
+# A lightning tour of the native syntax
 
 A few micro-examples should help give a flavour of Eucalypt's native
 syntax.
@@ -43,7 +43,7 @@ syntax.
 Here's a simple one:
 
 ```eu
-target-zones: ["a", "b", "c"] map("eu-west-1{{%}}")
+target-zones: ["a", "b", "c"] map("eu-west-1{}")
 ```
 
 ...expands into:
@@ -58,9 +58,20 @@ target-zones:
 This example illustrates how we apply transformations like `map`
 simply by concatenation.
 
-In this example, `map` is just a two-parameter function. Its first
-argument is provided in parentheses and its second argument comes from
-the preceding list.
+Although we're looking at the native Eucalypt syntax here, this
+example could just as easily be embedded directly in a YAML file using
+the `!eu` tag:
+
+```yaml
+target-zones: !eu ["a", "b", "c"] map("eu-west-1{}")
+```
+
+`eu` can happily process YAML, JSON and other files types as input as
+well as `.eu` files containing the native Eucalypt syntax.
+
+In this example, `map` is just a function of two parameters. Its first
+argument is provided in parentheses and its second argument is the
+preceding list.
 
 > Users of languages like Elixir or OCaml may recognise an implicit `|>`
 > operator here. Clojure users may see an invisible threading macro.
@@ -68,25 +79,42 @@ the preceding list.
 > _reverse_ of what you might expect in Haskell or OCaml: we write `x f`
 > (or `f(x)`), *not* `f x`.
 
-The string template, `"eu-west-1{{%}}"`, defines a function of one
-argument, returning a string. The key ingredients here are the
-interpolation syntax `{{...}}` which allows values to be inserted to
-the string, and the string anaphora "%" which represents a single
-parameter when used in a string literal.
+The string template, `"eu-west-1{}"`, defines a function of one
+argument, returning a string. The key ingredients here are:
+
+- the interpolation syntax `{...}` which allows values to be inserted to the
+string
+- the use of numbers as references interpolation syntax (`{0}`, `{1}`,
+`{2}`, ...) causes the literal to define a function, not a string
+- `{}` is a convenient synonym for `{0}`
+
+So:
+
+```eu
+a: 42 "The answer is {}"
+```
+
+renders as
+
+```yaml
+a: The answer is 42
+```
 
 > Users of Groovy or Kotlin may recognise an equivalent of the `it`
-> parameter. Lisp hackers are familiar with anaphoric macros. Clojure
-> users will recognise the `%`, `%1`, `%2` forms usable in `#(...)`
-> contexts.
+> parameter. Seasoned Lisp hackers are familiar with anaphoric macros.
+> Clojure users will recognise the `%`, `%1`, `%2` forms usable in
+> `#(...)` contexts.
 
 The whole line is a **declaration**.
 
 A **block**, the primary structuring element of Eucalypt is written as
-a sequence of such declarations enclosed in braces. Unlike JSON,
-commas are not needed to separate declarations. Unlike YAML,
-indentation is never significant. Instead, the Eucalypt parser
-determines the declarations mainly based on the location of colons.
-You could write:
+a sequence of such declarations enclosed in braces.
+
+- Unlike JSON, commas are not needed to separate declarations.
+- Unlike YAML, indentation is never significant.
+
+Instead, the Eucalypt parser determines the declarations mainly based
+on the location of colons. You could write:
 
 ```eu
 { x: 1 increment negate y: 2 }
@@ -96,8 +124,8 @@ You could write:
 
 Our `target-zones` property declaration is at the **top level** so is
 not surrounded by braces explicitly. Nevertheless it is in a block:
-the top level block. You can imagine the braces to be there if you
-like.
+the top level block known as a *unit* that is defined by the file it
+is in. You can imagine the braces to be there if you like.
 
 Finally, on this example, it is good practice to document
 declarations. Eucalypt offers an easy way to do that using
@@ -106,30 +134,22 @@ backtick and the declaration itself:
 
 ```eu
 ` “AZs to deploy alien widgets in”
-target-zones: [“a”, “b”, “c”] map(“eu-west-1{{%}}”)
-```
-
-Also, while we're looking at the native Eucalypt syntax here, we
-should note that this example can also be embedded directly in a YAML
-file using the `!eu` tag:
-
-```yaml
-target-zones: !eu ["a", "b", "c"] map("eu-west-1{{%}}")
+target-zones: [“a”, “b”, “c”] map(“eu-west-1{}”)
 ```
 
 Let's look at another small example:
 
 ```eu
-base(name): {
+character(name): {
   resource-name: name
-  created: eu.meta.runtime
+  created: io.epoch-time
 }
 
-anne: base("Anne") {
+prentice: character("Pirate Prentice") {
   laser-colour: "red"
 }
 
-bob: base("Bob") {
+slothrop: character("Tyrone Slothrop") {
   eye-count: 7
 }
 ```
@@ -138,21 +158,22 @@ We've introduced a new type of declaration here: `base(name): ...`.
 This is a **function declaration**, as opposed to the **property
 declaration** we saw in the last example.
 
-Eucalypt also has **operator declarations** and a **splice syntax**
-which can appear in blocks but we'll ignore those for now. They are
-covered in the user guide.
+> Eucalypt also has **operator declarations** and a **splice syntax**
+> and more which can appear in blocks but we'll ignore those for now.
+> They are covered in the user guide...
 
-The function declaration declares a function called `base`, accepting
-a single parameter (`name`) and returning a block containing two
-property declarations.
+The function declaration declares a function called `character`,
+accepting a single parameter (`name`) and returning a block containing
+two property declarations.
 
-Functions are declared in and live in blocks just like any other
-declaration but they are omitted when output is generated, so
-you won't see them in the YAML or JSON that Eucalypt produces.
+Functions (and in fact everything in Eucalypt) are declared in and
+live in blocks just like properties but they are omitted when output
+is generated, so you won't see them in the YAML or JSON that Eucalypt
+produces.
 
-The braces in the definition of `base` are there to delimit the
-resulting block - *not* to define a function body. A number-valued
-function would not need them:
+The braces in the definition of `character` are there to define the
+resulting block - *not* to delimit a function body. A function that
+returns a number would not need them:
 
 ```eu
 inc(x): x + 1 # this defines an increment function
@@ -162,13 +183,16 @@ inc(x): x + 1 # this defines an increment function
 literal:
 
 ```eu
-identity(x): x # this just returns its argument
+identity(x): x # this returns its argument, which could be a block
 ```
 
 The next important ingredient in this example is *block catenation*.
 
-Blocks can be treated as functions of a single parameter and applied
-to arguments by catenation, the effect of which is *block merge*.
+Blocks can be treated as functions of a single parameter. When applied
+as functions, the effect is a *block merge*.
+
+As we've already seen, functions can be applied to arguments by
+concatenation.
 
 So writing one block after another produces a merged block containing
 the contents of the second block merged "on top" of the first.
@@ -192,29 +216,29 @@ and
 So in our example, the resulting YAML would be"
 
 ```yaml
-anne:
-  resource-name: Anne
-  created: 2018-04-01 12:00:00
+prentice:
+  resource-name: Pirate Prentice
+  created: 1526991765
   laser-colour: red
 
-bob:
-  resource-name: Bob
-  created: 2018-04-01 12:00:00
+slothrop:
+  resource-name: Tyrone Slothrop
+  created: 1526991765
   eye-count: 7
 ```
 
-As you can see, `eu.meta.runtime` evaluates to a timestamp. This
-metadata is generated once at runtime, not each time the expression is
-evaluated. Eucalypt the language is purely functional, although its
-driver can perform all sorts of side-effects as input to the
-evaluation and as output from the evaluation. For this reason, Anne
-and Bob will have the same timestamps.
+As you can see, `io.epoch-time` evaluates to a timestamp. This
+metadata is generated once at launch time, not each time the
+expression is evaluated. Eucalypt the language is purely functional,
+although its command line driver can perform all sorts of side-effects
+as input to the evaluation and as output from the evaluation. For this
+reason, `prentice` and `slothrop` will have the same timestamps.
 
 Block merge can be a useful means of generating common content in
 objects. The common content can appear first as in this case, allowing
 it to be overridden. Or it couple be applied second allowing it to
-override the detail. Or a mixture of both. Many more sophisticated
-means of combining block data are available too.
+override the existing detail. Or a mixture of both. Many more
+sophisticated means of combining block data are available too.
 
 Note though that Eucalypt has nothing like virtual functions. The
 functions in scope when an expression is created are the ones that are
@@ -230,17 +254,19 @@ applied. So if you redefine an `f` like this, in an overriding block:
 a: e
 ```
 
-Block merge is only very loosely related to object oriented
+So block merge is only very loosely related to object oriented
 inheritance. Also by default you only get a _shallow_ merge - deep
-merges are covered in the user guide.
+merges are provided in the standard prelude and covered in the user
+guide.
 
 Just like we have string anaphora for turning simple strings into
-string-valued functions we have block anaphora, which use underscore
-instead of the percent character. `b: { a: _ }` defines a function,
-`b`, of one parameter that returns a block. `b(2)` evaluates to `{ a:
-2 }`. Applying a block with anaphora to another block will evaluate
-the function defined rather than falling back to block merge which is
-really just the default behaviour of applying a block.
+string-valued functions we have block anaphora, which appear as
+numbers prefixed with a leading underscore. `b: { a: _ }` defines a
+function, `b`, of one parameter returning a block. `b(2)` (or `2 b`)
+evaluates to `{ a: 2 }`. Applying a block with anaphora to another
+block will evaluate the function defined rather than falling back to
+block merge which is really just the default behaviour of applying a
+block.
 
 Eucalypt does not have a lambda syntax (yet). If anaphora cannot do
 what you want, consider using less nesting and defining intermediate

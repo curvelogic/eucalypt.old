@@ -1,8 +1,12 @@
 # Eucalypt
 
-This is the primary repository for the *eucalypt* language.
+This is the primary repository for the *eucalypt* tool for generating
+and transforming structured foramts like YAML and JSON.
 
-It contains documentation, standard prelude and reference test cases.
+It contains documentation, standard library, reference test cases and
+a test harness for implementations.
 
-Implementations of the language and command line are provided in other
-repositories for each implementation language (Haskell, Go, Clojure).
+An prototype implementation is in the early stages of development at
+https://github.com/curvelogic/eucalypt-hs. The beginnings of some
+documentation at https://curvelogic.github.io/eucalypt/ describe a
+mixture of what `eu` can do now and what it will do eventually.

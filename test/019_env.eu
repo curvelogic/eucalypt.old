@@ -1,0 +1,6 @@
+# -*- mode: conf -*-
+
+# requires prelude
+
+'~': io.env.HOME
+user: io.env.USER

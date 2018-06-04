@@ -53,8 +53,8 @@ merging: {
   m2-tagged: m2 with-tags
   checks: {
     trues: [
-      m-tagged = { a:2 b:3 tags:[:a, :b, :c]},
-      m2-tagged = { a:3  tags:[:a, :b, :c]}
+      m-tagged = { a: 2 b: 3 tags:[:a, :b, :c]},
+      m2-tagged = { a: 3 tags:[:a, :b, :c]}
     ]
   }
 
@@ -97,7 +97,7 @@ lookups: {
     trues: [
       titles = ["page one", "page two", "page three"],
       epilogues = ["x", "x", "."],
-      pages map(lookup(:title)) = pages map(lookup("title"))
+      (pages map(lookup(:title))) = (pages map(lookup("title")))
     ]
   }
 }
