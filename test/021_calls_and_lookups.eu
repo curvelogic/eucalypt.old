@@ -24,3 +24,10 @@ r: (6 (3 (2 a.b.c))) zero?
 checks2: {
   trues: [p, q, r]
 }
+
+scoped: {
+  const: 1234
+  f(x): x + const
+}.f(4321)
+
+pass: checks.trues ++ checks2.trues ++ [scoped = 5555] all-true? //=> true
