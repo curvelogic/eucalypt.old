@@ -54,3 +54,7 @@ checks4: {
   ip-components: "192.168.0.1" matches-of("\d+")
   trues: [ip-components = ["192", "168", "0", "1"]]
 }
+
+pass: checks.trues ++ checks2.trues ++ checks3.trues ++ checks4.trues  all-true?
+
+RESULT: if(pass, :PASS, :FAIL)

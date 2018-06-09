@@ -20,3 +20,5 @@ checks: {
     env = { 'Fn::Ref' : "EnvironmentName" }
   ]
 }
+
+RESULT: if(checks.trues all-true?, :PASS, :FAIL)

@@ -35,7 +35,7 @@ class Test:
         self.ignore = ignore == 'x'
         self.id = id
         self.name = name
-        self.outfile = output_directory / filepath.relative_to(test_directory).with_suffix(".out")
+        self.outfile = output_directory / filepath.relative_to(test_directory).with_suffix(".out.yaml")
         self.outfile.parent.mkdir(parents = True, exist_ok = True)
         self.errfile = output_directory / filepath.relative_to(test_directory).with_suffix(".err")
         self.errfile.parent.mkdir(parents = True, exist_ok = True)

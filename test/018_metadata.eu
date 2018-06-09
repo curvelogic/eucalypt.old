@@ -31,3 +31,5 @@ assertions: {
 }
 
 test: (1 + 1) //=> 2
+
+RESULT: if(checks.trues all-true?, :PASS, :FAIL)

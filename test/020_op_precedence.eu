@@ -77,3 +77,5 @@ checks: {
 	  larr_act = larr_exp
 	  ]
 }
+
+RESULT: if(checks.trues all-true?, :PASS, :FAIL)

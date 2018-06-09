@@ -1,7 +1,13 @@
-#!/usr/bin/env eu -B
+#!/usr/bin/env eu
 # -*- mode: conf -*-
 
+` "`__NULL` is a built in that exports as JSON/YAML null"
 null: __NULL
+
 data: {
   a: null
 }
+
+` "null = null is true in eucalypt; null is not very significant
+  really - it is mainly for exporting as null in json or yaml"
+RESULT: __IF(__EQ(null, data.a), :PASS, :FAIL)

@@ -68,7 +68,7 @@ false: __FALSE
 
 ` { doc: "`cat(a, b)` - explicit catenation, cat(a, b) = a b. Useful in folds etc."
     export: :suppress }
-cat: TODO(__CAT)
+cat: __CAT
 
 ` { doc: "`if(c, t, f)` - if `c` is `true`, return `t` else `f`."
     export: :suppress }
@@ -121,11 +121,15 @@ block: __BLOCK
 
 ` { doc: "`has(s, b)` - true if and only if block `b` has key (symbol) `s`."
     export: :suppress }
-has(s, b): TODO(__HAS(b, s))
+has(s, b): b map-values(const(true)) lookup-or(s, false)
 
 ` { doc: "`lookup(s, b)` - look up symbol `s` in block `b`, error if not found."
     export: :suppress }
 lookup(s, b): __LOOKUP(s, b)
+
+` { doc: "`lookup-in(b, s)` - look up symbol `s` in block `b`, error if not found."
+    export: :suppress }
+lookup-in(b, s): __LOOKUP(s, b)
 
 ` { doc: "`lookup-or(s, d, b)` - look up symbol `s` in block `b`, default `d` if not found."
     export: :suppress }
@@ -137,7 +141,7 @@ lookup-or-in(b, s, d): lookup-or(s, d, b)
 
 ` { doc: "`lookup-alts(syms, d)` - look up symbols `syms` in turn in block `b` until a value is found, default `d` if none."
     export: :suppress }
-lookup-alts(syms, d, b): foldr(lookup-or-in(b), syms, d)
+lookup-alts(syms, d, b): foldr(lookup-or-in(b), d, syms)
 
 ##
 ## Boolean
@@ -147,17 +151,25 @@ lookup-alts(syms, d, b): foldr(lookup-or-in(b), syms, d)
     export: :suppress }
 not: __NOT
 
-` { doc: "`l && r`` - true if and only if `l` and `r`"
+` { doc: "`l && r`` - true if and only if `l` and `r` are true."
     export: :suppress
     associates: :left
     precedence: :bool-prod }
 (l && r): __AND(l, r)
+
+` { doc: "`and(l, r)`` - true if and only if `l` and `r` are true."
+    export: :suppress }
+and: __AND
 
 ` { doc: "`l ∧ r`` - true if and only if `l` and `r`"
     export: :suppress
     associates: :left
     precedence: :bool-prod }
 (l ∧ r): l && r
+
+` { doc: "`or(l, r)`` - true if and only if `l` or `r` is true."
+    export: :suppress }
+or: __OR
 
 ` { doc: "`l || r`` - true if and only if `l` or `r`"
     export: :suppress
@@ -294,17 +306,17 @@ str: {
       export: :suppress }
   matches-of: matches flip
 
-  ` { doc: "match(s, re) - match string `s` using regex `re`, return list of full match then capture groups."
+  ` { doc: "matches?(re, s) - return true if `re` matches full string `s`."
       export: :suppress }
-  matches?(re): match(s, re) (not ∘ nil?)
+  matches?(re, s): match(s, re) (not ∘ nil?)
 
-  ` { doc: "append(b, a) - return string `b` appended to `a`."
+  ` { doc: "suffix(b, a) - return string `b` suffixed onto `a`."
       export: :suppress }
-  append(b, a): [a, b] join-on("")
+  suffix(b, a): [a, b] join-on("")
 
-  ` { doc: "append(b, a) - return string `b` prepended to `a`."
+  ` { doc: "prefix(b, a) - return string `b` prefixed onto `a`."
       export: :suppress }
-  prepend(b, a): [b, a] join-on("")
+  prefix(b, a): [b, a] join-on("")
 }
 
 ##
@@ -314,6 +326,10 @@ str: {
 ` { doc: "`identity(v)` - identity function, return value `v`."
     export: :suppress }
 identity(v): v
+
+` { doc: "`constantly(k)` - return single arg function that always returns k."
+    export: :suppress }
+const(k, _): k
 
 ` { doc: "`compose(f,g,x)` - apply function `f` to `g(x)`."
     export: :suppress }
@@ -356,7 +372,7 @@ uncurry(f, l): f(first(l), second(l))
 
 ` { doc: "`cond(l)` - in list `l` of [condition, value] select first true condition and return coresponding vaue. Default `d` if none."
     export: :suppress }
-cond(l, d): foldr(l, curry(if), d)
+cond(l, d): foldr(l, d, curry(if))
 
 #
 # Metadata basic
@@ -406,6 +422,13 @@ take(n, l): __IF((n zero?), [], cons(l head, take(n dec, l tail)))
     export: :suppress }
 drop(n, l): __IF((n zero?), l, drop(n dec, l tail))
 
+` { doc: "`nth(n, l)` - return `n`th item of list if it exists, otherwise panic."
+    export: :suppress }
+nth(n, l): l drop(n dec) head
+
+` { doc: "`l !! n` - return `n`th item of list if it exists, otherwise error."}
+(l !! n): l nth(n)
+
 # TODO: Can't use this until lists are exposed to eu as cons is not
 # currently lazy enough
 ` { doc: "`repeat(i)` - return infinite list of instances of item `i`."
@@ -414,14 +437,23 @@ repeat(i): __CONS(i, repeat(i))
 
 # TODO: sections
 ` { doc: "`foldl(op, i, l)` - left fold operator `op` over list `l` starting from value `i` "
-    # example: foldl((+), i, [1,2,3]) //=> (((i + 1) + 2) + 3)
+    # example: foldl(+, i, [1,2,3]) //=> (((i + 1) + 2) + 3)
     export: :suppress }
 foldl(op, i, l): if(l nil?, i, foldl(op, op(i, l head), l tail))
 
-` { doc: "`foldr(op, l, i)` - right fold operator `op` over list `l` ending with value `i` "
-    # example: foldr((+), [1,2,3], i) //=> (1 + (2 + (3 + i)))
+` { doc: "`foldr(op, i, l)` - right fold operator `op` over list `l` ending with value `i` "
+    # example: foldr(+, i, [1,2,3]) //=> (1 + (2 + (3 + i)))
     export: :suppress }
-foldr(op, l, i): if(l nil?, i, op(head(l), foldr(op, tail(l), i)))
+foldr(op, i, l): if(l nil?, i, op(head(l), foldr(op, tail(l), i)))
+
+` :suppress
+_impl: {
+  const-apply2(f, x, _): x f
+}
+
+` { doc: "`count(l)` - return count of items in list `l`"
+    export: :suppress }
+count(l): foldl(_impl.const-apply2(inc), 0, l)
 
 # TODO: lambdas
 ` { doc: "`map(f, l)` - map function `f` over list `l`"
@@ -455,13 +487,17 @@ remove(p?, l): filter(p? complement)
 
 ` { doc: "`append(l1, l2)` - concatenate two lists `l1` and `l2`."
     export: :suppress }
-append(l1, l2): foldr(cons, l1, l2)
+append(l1, l2): foldr(cons, l2, l1)
 
 ` { doc: "`l1 ++ l2` - concatenate lists `l1` and `l2`."
     export: :suppress
     associates: :left
     precedence: :append }
 (l1 ++ l2): append(l1, l2)
+
+` { doc: "`concat(ls)` - concatenate all lists in `ls` together."
+    export: :suppress }
+concat(ls): foldr(append, [], ls)
 
 ` :alias
 zip-with: map2
@@ -477,7 +513,7 @@ reverse(l): if(l nil?, l, append(reverse(l), [h(l)]))
 
 ` { doc: "`all-true?(l)` - true if and only if all items in list `l` are true."
     export: :suppress }
-all-true?(l): foldr(and, l, true)
+all-true?(l): foldl(and, true, l)
 
 ` { doc: "`all-true?(l)` - true if and only if all items in list `l` satisfy predicate `pred`."
     export: :suppress }
@@ -485,7 +521,7 @@ all(pred, l): l map(pred) all-true?
 
 ` { doc: "`any-true?(l)` - true if and only if any items in list `l` are true."
     export: :suppress }
-any-true?(l): foldr(or, l, false)
+any-true?(l): foldr(or, false, l)
 
 ` { doc: "`any-true?(l)` - true if and only if any items in list `l` satisfy predicate `pred`."
     export: :suppress }
@@ -547,3 +583,24 @@ map-values(f, b): b elements map-second(f) block
 ` { doc: "`map-keys(f, b)` - apply `f(k)` to each key in block `b`."
     export: :suppress }
 map-keys(f, b): b elements map-first(f) block
+
+` "`by-key(p?)` - return item match function that checks predicate `p?` against the (symbol) key."
+by-key(p?): p? ∘ key
+
+` "`by-key-name(p?)` - return item match function that checks predicate `p?` against string representation of the key."
+by-key-name(p?): p? ∘ str.of ∘ key
+
+` "`by-key-match(re)` - return item match function that checks string representation of the key matches regex `re`."
+by-key-match(re): by-key-name(str.matches?(re))
+
+` "`by-value(p?) - return item match runction that checks predicate `p?` against the item value."
+by-value(p?): p? ∘ value
+
+` "`select-items(f, b)` - return items from block `b` which match item match function `f`"
+select-items(f, b): b elements filter(f) 
+
+` "`match-select-values` - return list of values from block `b` with keys matching regex `re`."
+match-select-values(re, b): b select(by-key-match(re)) map(value)
+
+` "`select-values(p?, b)` - return items from block `b` where values match predicate `p?`"
+select-values(p?, b): b map(value) filter(p?)

@@ -1,4 +1,4 @@
-#!/usr/bin/env eu -B
+#!/usr/bin/env eu
 # -*- mode: conf -*-
 
 # Simple test of SKI combinators and simple functions
@@ -24,3 +24,8 @@ box: {
   value: i(5)
 }
 
+box2: {
+  value: 5 s(k, k)
+}
+
+RESULT: __IF(__EQ(box.value, box2.value), :PASS, :FAIL)

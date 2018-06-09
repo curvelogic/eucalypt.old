@@ -1,6 +1,7 @@
 #!/usr/bin/env eu -B
 # -*- mode: conf -*-
 
-if: __IF
-zero: __IF(__FALSE, 3, 0)
-three: __IF(__TRUE, 3, 0)
+zero: if(false, 3, 0)
+three: if(true, 3, 0)
+
+RESULT: if(zero = 0 && three = 3, :PASS, :FAIL)

@@ -26,22 +26,25 @@ left-folds: {
     a: foldl(and, true, [true, true, true, false])
     b: foldl(or, false, [false, false, false, false])
   }
+
+  pass: and(and(trues.a, trues.b),not(or(falses.a, falses.b)))
 }
 
 right-folds: {
 
-  foldr(op, l, e): if(l nil?, e, op(l head, foldr(op, l tail, e)))
+  foldr(op, e, l): if(l nil?, e, op(l head, foldr(op, l tail, e)))
 
   trues: {
-    a: foldr(or, [false, false, false, false], true)
-    b: foldr(and, [true, true], true)
+    a: foldr(or, true, [false, false, false, false])
+    b: foldr(and, true, [true, true], )
   }
 
   falses: {
-    a: foldr(or, [false, false, false, false], false)
-    b: foldr(and, [true, true], false)
+    a: foldr(or, false, [false, false, false, false])
+    b: foldr(and, false, [true, true])
   }
+
+  pass: and(and(trues.a, trues.b),not(or(falses.a, falses.b)))
 }
 
-
-end: true
+RESULT: if(and(left-folds.pass,right-folds.pass), :PASS, :FAIL)

@@ -4,3 +4,5 @@
 
 '~': io.env.HOME
 pwd: io.env.PWD
+
+pass: io.env keys map(str.of) filter(str.matches?("^HOME$")) count dec zero?

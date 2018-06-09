@@ -30,4 +30,4 @@ scoped: {
   f(x): x + const
 }.f(4321)
 
-pass: checks.trues ++ checks2.trues ++ [scoped = 5555] all-true? //=> true
+RESULT: if(checks.trues all-true?, :PASS, :FAIL)
