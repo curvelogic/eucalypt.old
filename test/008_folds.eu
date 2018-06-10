@@ -32,11 +32,11 @@ left-folds: {
 
 right-folds: {
 
-  foldr(op, e, l): if(l nil?, e, op(l head, foldr(op, l tail, e)))
+  foldr(op, e, l): if(l nil?, e, op(l head, foldr(op, e, l tail)))
 
   trues: {
     a: foldr(or, true, [false, false, false, false])
-    b: foldr(and, true, [true, true], )
+    b: foldr(and, true, [true, true])
   }
 
   falses: {

@@ -99,6 +99,14 @@ class Test:
         return self
 
 
+class BenchmarkTest(Test):
+
+    """   A test run purely for timing.   """
+
+    def __init__(self, filepath):
+        super().__init__(filepath)
+        self.id = "B" + self.id
+
 class ErrorTest(Test):
 
     """A test that expects a non-zero returncode"""
@@ -116,6 +124,10 @@ def find_simple_tests():
 def find_error_tests():
     return [ErrorTest(p) for p in sorted(test_directory.glob("errors/*.eu"))]
 
+def find_benchmark_tests():
+    return [BenchmarkTest(p) for p in sorted(test_directory.glob("bench/*.eu"))]
+
+
 parser = argparse.ArgumentParser("Eucalypt test harness")
 parser.add_argument("-b", "--bench", action='store_true', default=False)
 parser.add_argument("-n", "--repeats", action='store', type=int, default=100)
@@ -126,8 +138,11 @@ def main():
     tests = find_simple_tests() + find_error_tests()
 
     if opts.bench:
-        print(f"Timing tests with {opts.repeats} repeats.")
+        print(f"Timing standard tests with {opts.repeats} repeats.")
         results = [t.bench(opts.repeats) for t in tests]
+
+        print(f"Timing benchmark tests without repeat.")
+        results = [t.bench(1) for t in find_benchmark_tests()]
     else:
         results = [t.run() for t in tests]
         if any(r.failed() for r in results):
