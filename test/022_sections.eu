@@ -1,0 +1,29 @@
+# -*- mode: conf -*-
+
+
+sections-as-args: {
+  fold-add: foldl(+, 0, [1, 2, 3]) = 6
+  fold-sub: foldl(-, 6, [1, 2, 3]) = 0
+
+  pass: fold-add && fold-sub
+}
+
+
+add: +
+sub: -
+
+sections-as-values: {
+  add: +
+  sub: -
+
+  add-check: add(2, 3) = 5
+  sub-check: sub(8, 8) = 0
+
+  pass: add-check && sub-check
+}
+
+pass: [ sections-as-args.pass
+      , sections-as-values.pass
+      ] all-true?
+
+RESULT: if(pass, :PASS, :FAIL)
