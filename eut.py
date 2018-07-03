@@ -57,13 +57,13 @@ class Test:
         if self.format == "yaml":
             with open(self.outfile) as stream:
                 try:
-                    content_passes = yaml.load(stream)["RESULT"] == "PASS"
+                    content_passes = yaml.load(stream).get("RESULT") == "PASS"
                 except:
                     pass
 
         if self.format == "json":
             with open(self.outfile) as stream:
-                content_passes = json.load(stream)["RESULT"] == "PASS"
+                content_passes = json.load(stream).get("RESULT") == "PASS"
 
         return self.proc.returncode == 0 and content_passes
 
