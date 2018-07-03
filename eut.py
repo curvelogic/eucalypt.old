@@ -8,6 +8,12 @@ import sys
 import re
 import timeit
 import argparse
+import itertools
+try:
+    import yaml
+except:
+    print("WARNING: yaml not available")
+import json
 from enum import Enum
 from pathlib import (Path)
 
@@ -29,23 +35,37 @@ class Test:
 
     RE = re.compile(r"(x?)(\d+)_(.*?).eu")
 
-    def __init__(self, filepath):
+    def __init__(self, filepath, format="yaml"):
         self.filepath = filepath
         (ignore, id, name) = Test.RE.fullmatch(filepath.name).groups()
         self.ignore = ignore == 'x'
         self.id = id
         self.name = name
-        self.outfile = output_directory / filepath.relative_to(test_directory).with_suffix(".out.yaml")
+        self.format = format
+        self.outfile = output_directory / filepath.relative_to(test_directory).with_suffix(f".out.{format}")
         self.outfile.parent.mkdir(parents = True, exist_ok = True)
-        self.errfile = output_directory / filepath.relative_to(test_directory).with_suffix(".err")
+        self.errfile = output_directory / filepath.relative_to(test_directory).with_suffix(f".{format}.err")
         self.errfile.parent.mkdir(parents = True, exist_ok = True)
-        self.eu_args = ["eu", "-B", filepath]
+        self.eu_args = ["eu", "-B", "-x", format, filepath]
 
     def failed(self):
         return self.result is Result.FAIL
 
     def check(self):
-        return self.proc.returncode == 0
+        content_passes = True
+
+        if self.format == "yaml":
+            with open(self.outfile) as stream:
+                try:
+                    content_passes = yaml.load(stream)["RESULT"] == "PASS"
+                except:
+                    pass
+
+        if self.format == "json":
+            with open(self.outfile) as stream:
+                content_passes = json.load(stream)["RESULT"] == "PASS"
+
+        return self.proc.returncode == 0 and content_passes
 
     def execute(self):
         with open(self.outfile, "wb") as out:
@@ -60,7 +80,7 @@ class Test:
 
         """ Run eucalypt files """
 
-        print(self.id, self.name, sep=' ', end=' ')
+        print(self.id, self.name, f"(as {self.format})", sep=' ', end=' ')
 
         if self.ignore:
 
@@ -76,9 +96,17 @@ class Test:
             else:
                 print("FAIL\n")
                 with open(self.errfile, "r") as err:
-                    print("error output:\n---")
-                    sys.stdout.write(err.read())
-                    print("---\n")
+                    errout = err.read().strip()
+                    if errout:
+                        print("error output:\n---")
+                        sys.stdout.write(errout)
+                        print("---\n")
+                    else:
+                        with open(self.outfile, "r") as out:
+                            print("failing output:\n--")
+                            sys.stdout.write(out)
+                            print("---\n")
+
                 self.result = Result.FAIL
 
         return self
@@ -103,23 +131,25 @@ class BenchmarkTest(Test):
 
     """   A test run purely for timing.   """
 
-    def __init__(self, filepath):
-        super().__init__(filepath)
+    def __init__(self, filepath, format="yaml"):
+        super().__init__(filepath, format)
         self.id = "B" + self.id
 
 class ErrorTest(Test):
 
     """A test that expects a non-zero returncode"""
 
-    def __init__(self, filepath):
-        super().__init__(filepath)
+    def __init__(self, filepath, format="yaml"):
+        super().__init__(filepath, format)
         self.id = "E" + self.id
 
     def check(self):
         return self.proc.returncode > 0
 
 def find_simple_tests():
-    return [Test(p) for p in sorted(test_directory.glob("*.eu"))]
+    return [Test(p,fmt) for (p, fmt) in
+            itertools.product(sorted(test_directory.glob("*.eu")),
+                              ["yaml", "json"])]
 
 def find_error_tests():
     return [ErrorTest(p) for p in sorted(test_directory.glob("errors/*.eu"))]

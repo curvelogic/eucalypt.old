@@ -31,7 +31,6 @@ checks: {
   }
 }
 
-
 merging: {
   m: { a: 2 } { b: 3 }
   m2: ({ a: 2 } { a: 3 })
@@ -101,3 +100,9 @@ lookups: {
     ]
   }
 }
+
+pass: [ checks.trues values all-true?
+      , merging.checks.trues values all-true?
+      , lookups.checks.trues all-true?] all-true?
+
+RESULT: if(pass, :PASS, :FAIL)
