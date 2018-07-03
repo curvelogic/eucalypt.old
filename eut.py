@@ -104,7 +104,7 @@ class Test:
                     else:
                         with open(self.outfile, "r") as out:
                             print("failing output:\n--")
-                            sys.stdout.write(out)
+                            sys.stdout.write(out.read())
                             print("---\n")
 
                 self.result = Result.FAIL
