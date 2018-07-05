@@ -46,7 +46,7 @@ class Test:
         self.outfile.parent.mkdir(parents = True, exist_ok = True)
         self.errfile = output_directory / filepath.relative_to(test_directory).with_suffix(f".{format}.err")
         self.errfile.parent.mkdir(parents = True, exist_ok = True)
-        self.eu_args = ["eu", "-B", "-x", format, filepath]
+        self.eu_args = ["eu", "-B", "-x", format, "+" + str(filepath)]
 
     def failed(self):
         return self.result is Result.FAIL
