@@ -1,0 +1,26 @@
+# Simple arithmetic embedding
+arith:
+  x: 4.4
+  y: 5
+  z: !eu x + y
+  pass: !eu z = 9.4
+
+merging:
+  a:
+    i: 1
+    j: 2
+
+  b:
+    i: 4
+    k: 7
+
+  c: !eu a b
+
+  pass: !eu 'c = { i: 4 j: 2 k: 7 }'
+
+# Name scoping
+RESULT: !eu |
+  if([arith.pass,
+      merging.pass] all-true?,
+     :PASS,
+     :FAIL)

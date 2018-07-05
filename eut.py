@@ -8,7 +8,7 @@ import sys
 import re
 import timeit
 import argparse
-import itertools
+from itertools import (product, chain)
 try:
     import yaml
 except:
@@ -33,11 +33,11 @@ class Test:
 
     """ A test that by default passes with a zero return code """
 
-    RE = re.compile(r"(x?)(\d+)_(.*?).eu")
+    RE = re.compile(r"(x?)(\d+)_(.*?).(eu|yaml)")
 
     def __init__(self, filepath, format="yaml"):
         self.filepath = filepath
-        (ignore, id, name) = Test.RE.fullmatch(filepath.name).groups()
+        (ignore, id, name, ext) = Test.RE.fullmatch(filepath.name).groups()
         self.ignore = ignore == 'x'
         self.id = id
         self.name = name
@@ -148,8 +148,9 @@ class ErrorTest(Test):
 
 def find_simple_tests():
     return [Test(p,fmt) for (p, fmt) in
-            itertools.product(sorted(test_directory.glob("*.eu")),
-                              ["yaml", "json"])]
+            product(sorted(chain(test_directory.glob("*.eu"),
+                                 test_directory.glob("*.yaml"))),
+                           ["yaml", "json"])]
 
 def find_error_tests():
     return [ErrorTest(p) for p in sorted(test_directory.glob("errors/*.eu"))]
