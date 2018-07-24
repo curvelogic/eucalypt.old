@@ -7,6 +7,8 @@ RUN apt-get update \
  && apt-get install -y libgmp10 python3-pip python3-dev
 RUN pip3 install pipenv
 
+ADD Pipfile Pipfile
+ADD Pipfile.lock Pipfile.lock
 ADD eut.py eut.py
 ADD test test
 ADD entrypoint.sh entrypoint.sh
