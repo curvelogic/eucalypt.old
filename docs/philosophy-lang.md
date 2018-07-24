@@ -5,25 +5,26 @@ title: The philosophy behind Eucalypt, the language
 
 {% raw %}
 
-<span style="color: red; font-weight: bold"> Much of this does not yet
-exist. The introduction is here to act like a product specification,
-guiding development. It is highly subject to change and perpetually at
-risk of destruction. In short, go away and come back later. </span>
+<span style="color: red; font-weight: bold"> Eucalypt is in an
+experimental phase of development. Much of this does not yet exist.
+The introduction is here to act like a product specification, guiding
+development. It is highly subject to change and perpetually at risk of
+destruction. In short, go away and come back later. </span>
 
 # The philosophy behind Eucalypt (the language)
 
-Eucalypt, the language, is rather a strange language.
+Eucalypt, the language, is unorthodox in many respects - probably
+moreso than you might realise on first acquaintance.
 
-Probably much stranger than you might guess on first acquaintance.
+Many people have deep-seated and inflexible opinions about programming
+languages and language design [^1] and will likely find something in
+here that they have a kneejerk reaction against.
 
-People tend to have fairly deep-seated and inflexible opinions about
-programming languages and language design [^1] and they will likely
-find something in here that they object to.
-
-However, the design is not unprincipled and it is internally
-consistent. Design choices are driven by the primary use case. So it's
-worth exploring some of the inspiration and philosophy behind the
-language itself.
+However, the design is not unprincipled and, while it is experimental
+in some respects, I believe it's internally consistent. Several
+aspects of the design and the aesthetic are driven by the primary use
+case. Maybe by exploring some of the inspiration and philosophy behind
+the language itself, I can head off potential criticism.
 
 ## Accept crypticality for minimal intrusion
 
@@ -38,19 +39,19 @@ Eucalypt to accommodate increasingly ambitious use cases without
 breaking the paradigm and reaching for a general purpose scripting
 language. [^2]
 
-The importance of one-liners and small annotations and "logic
+The pre-eminence of one-liners and small annotations and "logic
 mark-up", means that Eucalypt often favours concise and cryptic over
 wordy and transparent. This is a controversial approach.
 
 - Eucalypt logic should "get out of the way" of the data. Templating
   is attractive precisely because the generating source looks very
-  like the result. Template tags are often short (and arguably
-  "cryptic" - `{{}}`, `<%= %>`, `[| ]`...) because these are "marking
-  up" the data which is the main event. At the same time the tags are
+  like the result. Template tags are often short (with "cryptic"
+  delimiters - `{{}}`, `<%= %>`, `[| ]`...) because these are "marking
+  up" the data which is the main event. At the same time, the tags are
   often "noisy" or visually disruptive to ensure they cannot be
-  ignored. Eucalypt logic picks and choose from these expressive
-  effects to try and be a sympathetic cohabitee with its accompanying
-  data.
+  ignored. Eucalypt via operator and bracket definitions, picks and
+  chooseS from a similar palette of expressive effects to try and be a
+  sympathetic cohabitee with its accompanying data.
 
 - There are many cases where it makes sense to resist offering an
   incomplete understanding in favour of demanding full understanding.
@@ -60,16 +61,16 @@ wordy and transparent. This is a controversial approach.
   gain nothing from the ideas that the word `bind` conveys when trying
   to understand program text.
 
-- Eucalypt plain ignores the notion that program text should be
+- Eucalypt just plain ignores the notion that program text should be
   readable as English text. This (well motivated) idea has made a
   resurgence in recent years through the back door of internal DSLs
   and "fluent" Java interfaces [^3]. There is much merit in languages
   supple enough to allow the APIs to approach the natural means of
-  expression of the problem domain. However, problem domains often
-  have their own technical jargon and notation which suit their
-  purpose better than natural language so it cuts both ways. Program
-  text should be approachable by its target audience but that does not
-  mean it should make no demands of its target audience.
+  expression of the problem domain. However, problem domains
+  frequently have their own technical jargon and notation which suit
+  their purpose better than natural language so it cuts both ways.
+  Program text should be approachable by its target audience but that
+  does not mean it should make no demands of its target audience.
 
 These stances lead directly to several slightly esoteric aspects of
 Eucalypt that may be obnoxious to some:
@@ -79,25 +80,25 @@ Eucalypt that may be obnoxious to some:
   Using operators keeps custom logic visually out of the way of the
   data whilst also signposting it to attract closer attention.
 
-- Eucalypt lets you define your own binary operators and specify their
+- Eucalypt lets you define your own operators and specify their
   precedence and associativity (which are applied at a relatively late
   stage in the evaluation pipeline - *operator soup* persists through
-  the initial parse). There are no unary or ternary operators.
+  the initial parse). There are no ternary operators.
 
 - For absolute minimal intrusion, merely the act of placing elements
-  next to each other ("catenation:), `x f`, is meaningful in Eucalypt.
+  next to each other ("catenation"), `x f`, is meaningful in Eucalypt.
   By default this is pipeline-order function application, but blocks
   and lists can be applied as functions to make common
   transformations, like block merge, very succinct.
 
 - For even more power, Eucalypt lets you alter the meaning of
-  concatenation via *idiot brackets* [^4]. This is modeled after the
+  concatenation via *idiot brackets* [^4]. This is inspired by the
   *idiom brackets* that can be used to express applicative styles in
-  functional programming [^5]. These also provide an acceptable proxy for
-  unary, ternary and other operators too.
+  functional programming [^5]. These also provide an acceptable proxy
+  for ternary and other operators too.
 
-- An equivalent reinterpretation of Eucalypt block syntax to provide a
-  capability similar to Haskell's `do` notation could follow.
+- An equivalent generalisation of Eucalypt block syntax to provide a
+  capability similar to Haskell's `do` notation might follow.
 
 ## Cohabitation of code and data
 
@@ -122,7 +123,7 @@ cohabitation; code lives in amongst the data it operates on but is
 stripped out before export.
 
 Nevertheless Eucalypt is heavily inspired by Lisp and aims for a
-similar feeling of fluidity though:
+similar fluidity though:
 
 - lazy evaluation (encompassing uses of Lisp macros which control
   evaluation order - if is)
@@ -140,12 +141,12 @@ similar feeling of fluidity though:
   average programmer in these areas - (ab)use of catenation being the
   key one.
 
-- However, Eucalypt isn't ashamed of its dusty corners. Dusty corners
-  are areas where novices and experts alike can get trapped but
-  they're also rich seams for experimentation, innovation and
-  discovery[^6]. If you have to venture too far off-piste to find what you
-  need, we'll find a way to bring it onto the nursery slopes rather
-  than close off the mountain.
+- However, Eucalypt shouldn't be ashamed of its dusty corners. Dusty
+  corners are areas where novices and experts alike can get trapped
+  and lose time but they're also rich seams for experimentation,
+  innovation and discovery[^6]. If you have to venture too far
+  off-piste to find what you need, we'll find a way to bring it onto
+  the nursery slopes but we won't close off the mountain.
 
 {% endraw %}
 
