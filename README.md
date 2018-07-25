@@ -3,10 +3,10 @@
 This is the primary repository for the *eucalypt* tool for generating
 and transforming structured foramts like YAML and JSON.
 
-It contains documentation, standard library, reference test cases and
-a test harness for implementations.
+It is for documentation, standard prelude, reference test cases and a
+test harness for implementations.
 
-An prototype implementation is in the early stages of development at
+One prototype implementation is in the early stages of development at
 https://github.com/curvelogic/eucalypt-hs. The beginnings of some
 documentation at https://curvelogic.github.io/eucalypt/ describe a
 mixture of what `eu` can do now and what it will do eventually.

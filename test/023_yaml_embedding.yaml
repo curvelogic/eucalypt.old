@@ -18,6 +18,9 @@ merging:
 
   pass: !eu 'c = { i: 4 j: 2 k: 7 }'
 
+hidden: !eu.hide
+  text: this block should be hidden
+
 # Name scoping
 RESULT: !eu |
   if([arith.pass,
