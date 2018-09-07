@@ -95,9 +95,8 @@ lookups: {
   checks: {
     trues: [
       titles = ["page one", "page two", "page three"],
-      epilogues = ["x", "x", "."],
-      (pages map(lookup(:title))) = (pages map(lookup("title")))
-    ]
+      epilogues = ["x", "x", "."]
+      ]
   }
 }
 
