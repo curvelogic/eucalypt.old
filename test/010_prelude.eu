@@ -95,7 +95,7 @@ tests: {
     suffix: str.suffix
     prefix: str.prefix
 
-    t1: join([str.of(1), str.of(1.0)], " ") = "1 1.0"
+    t1: join([str.of(1), str.of(:s)], " ") = "1 s"
     t2: ("1-2-3" split-on("-")) = ["1","2","3"]
     t3: ([1,2,3] map(str.of) join-on("&")) = "1&2&3"
     t4: ("12-23-32" str.match-with("(\d+)-(\d+)-(\d+)") tail) = ["12", "23", "32"]
