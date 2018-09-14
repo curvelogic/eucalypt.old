@@ -1,0 +1,7 @@
+# -*- mode: conf -*-
+
+fib(n): if(n <= 1, 1, fib(n - 1) + fib(n - 2))
+
+f(x): repeat(x) take(1000) foldl(+, 0)
+
+result: f(fib(15))
