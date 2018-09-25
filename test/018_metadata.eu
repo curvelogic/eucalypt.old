@@ -24,10 +24,13 @@ checks: {
   ]
 }
 
-
 assertions: {
   a1: foldl(and, true, checks.trues) //=> true
   a1meta: meta(a1)
+}
+
+tags: {
+  x: 9 // { export: { yaml: { tag: "Ref" } } }
 }
 
 test: (1 + 1) //=> 2
