@@ -30,7 +30,6 @@ io: {
 }
 
 
-
 TODO(x): ""
 
 ##
@@ -119,6 +118,16 @@ sym: __SYM
     export: :suppress }
 merge: __MERGE
 
+` { doc: "`deep-merge(b1, b2)` - deep merge block `b2` on top of `b1`, merges nested blocks but not lists."
+    export: :suppress }
+deep-merge: __DEEPMERGE
+
+` { doc: "`l << r` - deep merge block `r` on top of `l`, merging nested blocks, not lists."
+    export: :suppress
+    associates: :left
+    precedence: :append }
+(l << r): __DEEPMERGE(l, r)
+
 ` { doc: "`elements(b)` - expose list of elements of block `b`."
     export: :suppress }
 elements: __ELEMENTS
@@ -155,37 +164,45 @@ lookup-alts(syms, d, b): foldr(lookup-or-in(b), d, syms)
 ## Boolean
 ##
 
-` { doc: "`not(b) - toggle boolean.`"
+` { doc: "`not(b) - toggle boolean."
     export: :suppress }
 not: __NOT
 
-` { doc: "`l && r`` - true if and only if `l` and `r` are true."
+` { doc: "`!x` - not x, toggle boolean."
+    precedence: :bool-unary }
+(! b): b not
+
+` { doc: "`¬x` - not x, toggle boolean."
+    precedence: :bool-unary }
+(¬ b): b not
+
+` { doc: "`l && r` - true if and only if `l` and `r` are true."
     export: :suppress
     associates: :left
     precedence: :bool-prod }
 (l && r): __AND(l, r)
 
-` { doc: "`and(l, r)`` - true if and only if `l` and `r` are true."
+` { doc: "`and(l, r)` - true if and only if `l` and `r` are true."
     export: :suppress }
 and: __AND
 
-` { doc: "`l ∧ r`` - true if and only if `l` and `r`"
+` { doc: "`l ∧ r` - true if and only if `l` and `r`"
     export: :suppress
     associates: :left
     precedence: :bool-prod }
 (l ∧ r): l && r
 
-` { doc: "`or(l, r)`` - true if and only if `l` or `r` is true."
+` { doc: "`or(l, r)` - true if and only if `l` or `r` is true."
     export: :suppress }
 or: __OR
 
-` { doc: "`l || r`` - true if and only if `l` or `r`"
+` { doc: "`l || r` - true if and only if `l` or `r`"
     export: :suppress
     associates: :left
     precedence: :bool-sum }
 (l || r): __OR(l, r)
 
-` { doc: "`l ∨ r`` - true if and only if `l` or `r`"
+` { doc: "`l ∨ r` - true if and only if `l` or `r`"
     export: :suppress
     associates: :left
     precedence: :bool-sum }
@@ -344,7 +361,7 @@ const(k, _): k
 compose(f, g, x): x g f
 
 ` { doc: "`(f ∘ g)` - return composition of `f` and `g`"
-    example: (head ∘ tail)([1,2]) //=> 2
+    # example: (head ∘ tail)([1,2]) //=> 2
     export: :suppress
     associates: :right
     precedence: 88 }
@@ -416,7 +433,7 @@ meta: __META
 #
 
 ` { doc: "`nil?(l)` - `true` if list `l` is empty, `false` otherwise."
-    example: nil?([1]) //=> false
+    # example: nil?([1]) //=> false
     export: :suppress }
 nil?(l): l = []
 
@@ -435,13 +452,10 @@ nth(n, l): l drop(n dec) head
 ` { doc: "`l !! n` - return `n`th item of list if it exists, otherwise error."}
 (l !! n): l nth(n)
 
-# TODO: Can't use this until lists are exposed to eu as cons is not
-# currently lazy enough
 ` { doc: "`repeat(i)` - return infinite list of instances of item `i`."
     export: :suppress }
 repeat(i): __CONS(i, repeat(i))
 
-# TODO: sections
 ` { doc: "`foldl(op, i, l)` - left fold operator `op` over list `l` starting from value `i` "
     # example: foldl(+, i, [1,2,3]) //=> (((i + 1) + 2) + 3)
     export: :suppress }
@@ -461,9 +475,7 @@ _impl: {
     export: :suppress }
 count(l): foldl(_impl.const-apply2(inc), 0, l)
 
-# TODO: lambdas
 ` { doc: "`map(f, l)` - map function `f` over list `l`"
-    # example: map(|x|(x+2),[1,2,3]) //=> [3,4,5]
     export: :suppress }
 map(f, l): if(l nil?, l, cons(l head f, l tail map(f)))
 
@@ -517,7 +529,7 @@ zip-with: map2
 zip-apply(fs, vs): zip-with(cat, vs, fs)
 
 ` { doc: "`reverse(l) - reverse list `l`"
-    example: reverse([1,2,3]) //=> [3,2,1]
+    # example: reverse([1,2,3]) //=> [3,2,1]
     export: :suppress }
 reverse(l): foldl(cons flip, [], l)
 
@@ -618,3 +630,65 @@ match-select-values(re, b): b select-items(by-key-match(re)) map(value)
 
 ` "`select-values(p?, b)` - return items from block `b` where values match predicate `p?`"
 select-values(p?, b): b map(value) filter(p?)
+
+` :suppress
+_block: {
+  ` { doc: "If `k` satisfies `k?` then `v!` else `v`" export: :suppress }
+  alter?(k?, v!, k, v): [k, if(k k?, v!, v)]
+
+  ` { doc: "If `k` satisfies `k?` then `v!` else `v`" export: :suppress }
+  update?(k?, f, k, v): [k, if(k k?, v f, v)]
+}
+
+# By property alteration of blocks
+
+` { doc: "Alter block `b` so any value with key `k` has value `v``"
+    export: :suppress }
+alter-value(k, v, b): b map-kv(_block.alter?(= k, v))
+
+` { doc: "Alter block `b` so any value with key `k` has value `f(v)`
+where v is the existing value"
+    export: :suppress }
+update-value(k, f, b): b map-kv(_block.update?(= k, f))
+
+` { doc: "Alter block `b` by setting to value `v` at path-of-keys `ks`"
+    export: :suppress }
+alter(ks, v, b): b foldr(update-value, const(v), ks)
+
+` { doc: "Alter block `b` by applying `f` to value at path-of-keys `ks`"
+    export: :suppress}
+update(ks, f, b): b foldr(update-value, f, ks)
+
+` { doc: "update-value-or(k, f, d, b) - Set `k` in block `b` to `f(v)` where
+v is existing value, otherwise add with default value `d`."
+    export: :suppress }
+update-value-or(k, f, d, b): {
+  acc(st, el): if(k = (el key),
+                  [cons([k, f(el value)], st first), []],
+		  [cons(el, st first), st second])
+  final-state: foldl(acc,
+                     [[], [[k, d]]],
+		     b elements)
+  final-block: final-state (append flip uncurry) reverse block
+}.final-block
+
+` { doc: "set(k, v, b) - Set `k` in block `b` to `v`, adding if absent."
+    export: :suppress}
+set-value(k, v): update-value-or(k, const(v), v)
+
+
+` { doc: "tongue(ks, v) - Create a block with a single nested
+path-of-keys `ks` down to value `v`"
+    export: :suppress}
+tongue(ks, v): {
+  t(k, e): [[k, e]] block
+  ret: foldr(t, v, ks) 
+}.ret
+
+` { doc: "merge-at(ks, v, b) - merge block `v` into value at path-of-keys `ks`"
+    export: :suppress }
+merge-at(ks, v, b): if(ks nil?,
+                       b v,
+		       b update-value-or(ks head,
+		                         merge-at(ks tail, v),
+					 tongue(ks tail, v)))

@@ -76,6 +76,38 @@ checks: {
 	  rarr_act = rarr_exp,
 	  larr_act = larr_exp
 	  ]
+
+  pass: trues all-true?
 }
 
-RESULT: if(checks.trues all-true?, :PASS, :FAIL)
+
+unary-ops: {
+  (¬ x): not(x)
+  f: ¬true
+
+  (⊙foo): "{foo} after ring"
+  r: ⊙ 66
+
+  (x ¡): x * -1
+  z: 99 ¡
+
+  pass: f = false ∧ r = "66 after ring" ∧ z = -99
+}
+
+unary-prec: {
+  ` { precedence: 60 } (££ x): 6 / x
+  ` { precedence: 70 } (y €): y / 2
+
+  res: ££ 6 €
+
+  ` { precedence: 60 } (⊡ x): 6 / x
+  ` { precedence: 50 } (y ⨈): y / 2
+
+  res2: ⊡ 2 ⨈
+
+  pass: res = 2 ∧ res2 = 3 / 2
+}
+
+but: ! false
+
+RESULT: if(checks.pass ∧ unary-ops.pass ∧ unary-prec.pass, :PASS, :FAIL)
