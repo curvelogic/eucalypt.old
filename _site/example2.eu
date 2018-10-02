@@ -1,0 +1,12 @@
+character(name): {
+  resource-name: name
+  created: io.epoch-time
+}
+
+prentice: character("Pirate Prentice") {
+  laser-colour: "red"
+}
+
+slothrop: character("Tyrone Slothrop") {
+  eye-count: 7
+}
