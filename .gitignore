@@ -2,3 +2,4 @@
 /docs/_site
 /__pycache__
 /.build/output
+/site/
