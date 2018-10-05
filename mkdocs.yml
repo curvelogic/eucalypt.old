@@ -5,6 +5,7 @@ docs_dir: docs
 pages:
 - Home: index.md
 - Getting Started: getting-started.md
+- Syntax: syntax.md
 - Command Line: command-line.md
 - Philosophy: philosophy-lang.md
 markdown_extensions:

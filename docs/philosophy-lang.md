@@ -24,7 +24,7 @@ eucalypt files that are predominantly data rather than manipulation.
 The **eucalypt** language is the depth behind these one-liners that allows
 **eucalypt** to accommodate increasingly ambitious use cases without
 breaking the paradigm and reaching for a general purpose scripting
-language. [^2]
+language.
 
 The pre-eminence of one-liners and small annotations and "logic
 mark-up", means that **eucalypt** often favours concise and cryptic over
@@ -51,7 +51,7 @@ wordy and transparent. This is a controversial approach.
 - **eucalypt** just plain ignores the notion that program text should be
   readable as English text. This (well motivated) idea has made a
   resurgence in recent years through the back door of internal DSLs
-  and "fluent" Java interfaces [^3]. There is much merit in languages
+  and "fluent" Java interfaces [^2]. There is much merit in languages
   supple enough to allow the APIs to approach the natural means of
   expression of the problem domain. However, problem domains
   frequently have their own technical jargon and notation which suit
@@ -78,11 +78,12 @@ These stances lead directly to several slightly esoteric aspects of
   and lists can be applied as functions to make common
   transformations, like block merge, very succinct.
 
-- For even more power, **eucalypt** lets you alter the meaning of
-  concatenation via *idiot brackets* [^4]. This is inspired by the
-  *idiom brackets* that can be used to express applicative styles in
-  functional programming [^5]. These also provide an acceptable proxy
-  for ternary and other operators too.
+- For even more power, **eucalypt** will let you alter the meaning of
+  concatenation via overloaded *idiot brackets* [^3]. (`[[x y]]:
+  ...`). This is inspired by the *idiom brackets* that can be used to
+  express applicative styles in functional programming [^4]. These
+  also provide an acceptable proxy for ternary and other operators
+  too.
 
 - An equivalent generalisation of **eucalypt** block syntax to provide a
   capability similar to Haskell's `do` notation might follow.
@@ -110,11 +111,11 @@ cohabitation; code lives in amongst the data it operates on but is
 stripped out before export.
 
 Nevertheless **eucalypt** is heavily inspired by Lisp and aims for a
-similar fluidity though:
+similar fluidity through:
 
-- lazy evaluation (encompassing uses of Lisp macros which control
-  evaluation order - if is)
-- economical syntax and syntactic reinterpretability (idiot brackets)
+- lazy evaluation (going some way towards matching uses of Lisp macros
+  which control evaluation order - `if` is a function)
+- economical syntax to allow for manipulation of code as data
 
 ## Simplicity
 
@@ -131,7 +132,7 @@ similar fluidity though:
 - However, **eucalypt** shouldn't be ashamed of its dusty corners. Dusty
   corners are areas where novices and experts alike can get trapped
   and lose time but they're also rich seams for experimentation,
-  innovation and discovery[^6]. If you have to venture too far
+  innovation and discovery[^5]. If you have to venture too far
   off-piste to find what you need, we'll find a way to bring it onto
   the nursery slopes but we won't close off the mountain.
 
@@ -142,24 +143,16 @@ similar fluidity though:
 
 [^1]: ...often a result of underfamiliarity with the alternatives.
 
-[^2]: For some reason, I think of this rather like the historical
-	passages in The Lord of the Rings; they give a tremendous sense of
-	the depth of the world, that everywhere you look there is a rich
-	culture and background staring back at you. You trust that it's
-	all coherent and all there if you need it but are generally happy
-	to be led through the main narrative over the surface of this rich
-	mythology.
-
-[^3]: Actually the key benefit of fluent interfaces in Java is they
+[^2]: Actually the real benefit of fluent interfaces in Java is they
 	offer a cheap user interface for configuration of APIs by
 	leveraging your IDE's autocomplete capability. All other benefits
 	are orthogonal.
 
-[^4]: Sorry but if I didn't call them that, someone else would.
+[^3]: If I didn't call them that, someone else would.
 
-[^5]: Applicative Programming with Effects, Conor McBride and Ross
+[^4]: Applicative Programming with Effects, Conor McBride and Ross
 	Paterson. (2008)
 	http://www.staff.city.ac.uk/~ross/papers/Applicative.html
 
-[^6]: "A man of genius makes no mistakes. His errors are volitional
+[^5]: "A man of genius makes no mistakes. His errors are volitional
 	and are the portals to discovery." - James Joyce, Ulysses
