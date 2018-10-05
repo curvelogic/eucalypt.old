@@ -12,3 +12,4 @@ markdown_extensions:
   - admonition
   - footnotes
 theme: readthedocs
+google_analytics: ['UA-42926869-3', 'curvelogic.co.uk']
