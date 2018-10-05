@@ -165,7 +165,7 @@ string property within a block and mark it with annotation metadata
   <code>⊚</code>) and are used to name operators</li>
 </ul>
 <h2 id="the-block-dsl">The block DSL</h2>
-<p>A <em>block</em> is surrounded by curly braces:</p>
+<p>A <strong>block</strong> is surrounded by curly braces:</p>
 <pre><code class="eu">... { ... }
 </code></pre>
 
@@ -187,17 +187,17 @@ string property within a block and mark it with annotation metadata
 }
 </code></pre>
 
-<p>The top-level block in a file (a <em>unit</em>) does not have braces:</p>
+<p>The top-level block in a file (a <strong>unit</strong>) does not have braces:</p>
 <pre><code class="eu">a: 1
 b: 2
 c: 3
 </code></pre>
 
-<p>So far all these declarations have been <em>property declarations</em> which
+<p>So far all these declarations have been <strong>property declarations</strong> which
 contains a name and an expression, separated by a colon.</p>
 <p>There is no comma separating declarations. Nor are line endings
-significant. The following is a block of three <em>property
-declarations</em>.</p>
+significant. The following is a block of three <strong>property
+declarations</strong>.</p>
 <pre><code class="eu">a: 1 b: 2 c: 3
 </code></pre>
 
@@ -218,7 +218,7 @@ note that they are required for list literals in the expression
 DSL.</p>
 </div>
 <p>There are other types of declarations. By specifying a parameter list,
-you get a <em>function declaration</em>:</p>
+you get a <strong>function declaration</strong>:</p>
 <pre><code class="eu"># A function declaration
 f(x, y): x + y
 
@@ -243,7 +243,7 @@ operators too, either binary:</p>
 in the symbol or punctuation classes are fine for operators.</p>
 <p>To control the precedence and associativity of user defined operators,
 you need metadata annotations.</p>
-<p><em>declaration annotations</em> allow us to specify arbitrary metadata
+<p><strong>declaration annotations</strong> allow us to specify arbitrary metadata
 against declarations. These can be used for documentation and similar.</p>
 <p>To attach an annotation to a declaration, squeeze it between a leading
 backtick and the declaration itself:</p>
@@ -254,7 +254,7 @@ a: 1
 b: 2
 </code></pre>
 
-<p>Some metadata activates special handling, such as the <code>associates</code> and
+<p>Some metadata activate special handling, such as the <code>associates</code> and
 <code>precedence</code> keys you can put on operator declarations:</p>
 <pre><code class="eu">` { doc: &quot;`(f ∘ g)` - return composition of `f` and `g`&quot;
     associates: :right
@@ -289,7 +289,7 @@ is an expression and defined by the expression DSL.</p>
 <pre><code class="eu">&quot;a string&quot;
 </code></pre>
 
-<p>...<em>symbols</em>, prefixed by a colon...</p>
+<p>...<strong>symbols</strong>, prefixed by a colon...</p>
 <pre><code class="eu">:key
 </code></pre>
 
@@ -313,25 +313,25 @@ separated sequence of expressions:</p>
 </code></pre>
 
 <h3 id="names">Names</h3>
-<p>Then there are <em>names</em>, which refer to the surrounding context. They
+<p>Then there are <strong>names</strong>, which refer to the surrounding context. They
 might refer to properties:</p>
 <pre><code class="eu">x: 22
 y: x
 </code></pre>
 
-<p>...or functions:</p>
+<p>...or <em>functions</em>:</p>
 <pre><code class="eu">add-one(x): 1 + x
 three: add-one(2)
 </code></pre>
 
-<p>...or operators:</p>
+<p>...or <em>operators</em>:</p>
 <pre><code class="eu">(x &amp;&amp;&amp; y): [x, x, x, y]
 z: &quot;da&quot; &amp;&amp;&amp; &quot;dum&quot;
 </code></pre>
 
 <h3 id="calling-functions">Calling functions</h3>
 <p>Functions can be applied by suffixing a argument list in parens, with
-<strong>no intervening whitespace</strong>:</p>
+<em>no intervening whitespace</em>:</p>
 <pre><code class="eu">f(x, y): x + y
 result: f(2, 2) # no whitespace
 </code></pre>
@@ -349,11 +349,11 @@ incremement: add(1)
 result: 2 increment
 </code></pre>
 
-<p>...and placeholder underscores (or expression anaphora) can be used to
-define simple functions without the song and dance of a function
+<p>...and placeholder underscores (or <em>expression anaphora</em>) can be used
+to define simple functions without the song and dance of a function
 declaration:</p>
-<pre><code class="eu">f: if(x odd?, (_ * 32 / 12), (99 / _))
-result: f 3
+<pre><code class="eu">f: if(tuesday?, (_ * 32 / 12), (99 / _))
+result: f(3)
 </code></pre>
 
 <p>In fact, in many cases the underscores can be omitted, leading to a
