@@ -47,7 +47,7 @@ Eucalypt has two types of names:
 
 ## The block DSL
 
-A *block* is surrounded by curly braces:
+A **block** is surrounded by curly braces:
 
 ```eu
 ... { ... }
@@ -75,7 +75,7 @@ A *block* is surrounded by curly braces:
 }
 ```
 
-The top-level block in a file (a *unit*) does not have braces:
+The top-level block in a file (a **unit**) does not have braces:
 
 ```eu
 a: 1
@@ -83,12 +83,12 @@ b: 2
 c: 3
 ```
 
-So far all these declarations have been *property declarations* which
+So far all these declarations have been **property declarations** which
 contains a name and an expression, separated by a colon.
 
 There is no comma separating declarations. Nor are line endings
-significant. The following is a block of three *property
-declarations*.
+significant. The following is a block of three **property
+declarations**.
 
 ```eu
 a: 1 b: 2 c: 3
@@ -112,7 +112,7 @@ a: 1 b: 2 c: 3
 	DSL.
 
 There are other types of declarations. By specifying a parameter list,
-you get a *function declaration*:
+you get a **function declaration**:
 
 ```eu
 # A function declaration
@@ -145,7 +145,7 @@ in the symbol or punctuation classes are fine for operators.
 To control the precedence and associativity of user defined operators,
 you need metadata annotations.
 
-*declaration annotations* allow us to specify arbitrary metadata
+**declaration annotations** allow us to specify arbitrary metadata
 against declarations. These can be used for documentation and similar.
 
 To attach an annotation to a declaration, squeeze it between a leading
@@ -159,7 +159,7 @@ a: 1
 b: 2
 ```
 
-Some metadata activates special handling, such as the `associates` and
+Some metadata activate special handling, such as the `associates` and
 `precedence` keys you can put on operator declarations:
 
 ```eu
@@ -209,7 +209,7 @@ First there are primitives.
 "a string"
 ```
 
-...*symbols*, prefixed by a colon...
+...**symbols**, prefixed by a colon...
 
 ```eu
 :key
@@ -244,7 +244,7 @@ list: [1, 2, :a, "boo"]
 
 ### Names
 
-Then there are *names*, which refer to the surrounding context. They
+Then there are **names**, which refer to the surrounding context. They
 might refer to properties:
 
 ```eu
@@ -252,14 +252,14 @@ x: 22
 y: x
 ```
 
-...or functions:
+...or *functions*:
 
 ```eu
 add-one(x): 1 + x
 three: add-one(2)
 ```
 
-...or operators:
+...or *operators*:
 
 ```eu
 (x &&& y): [x, x, x, y]
@@ -269,7 +269,7 @@ z: "da" &&& "dum"
 ### Calling functions
 
 Functions can be applied by suffixing a argument list in parens, with
-**no intervening whitespace**:
+*no intervening whitespace*:
 
 ```eu
 f(x, y): x + y
@@ -294,13 +294,13 @@ incremement: add(1)
 result: 2 increment
 ```
 
-...and placeholder underscores (or expression anaphora) can be used to
-define simple functions without the song and dance of a function
+...and placeholder underscores (or *expression anaphora*) can be used
+to define simple functions without the song and dance of a function
 declaration:
 
 ```eu
-f: if(x odd?, (_ * 32 / 12), (99 / _))
-result: f 3
+f: if(tuesday?, (_ * 32 / 12), (99 / _))
+result: f(3)
 ```
 
 In fact, in many cases the underscores can be omitted, leading to a
