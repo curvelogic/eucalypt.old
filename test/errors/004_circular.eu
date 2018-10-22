@@ -1,4 +1,4 @@
 #!/usr/bin/env eu -B
 # -*- mode: conf -*-
 
-f: f(s)
+f: f(f)
