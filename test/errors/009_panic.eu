@@ -1,0 +1,3 @@
+# -*- mode: conf -*-
+
+x: panic("This exits immediately with message and non-zero exit code")

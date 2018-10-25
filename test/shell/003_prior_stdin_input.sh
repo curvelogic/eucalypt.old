@@ -1,9 +1,9 @@
 #!/bin/bash
 
-TEMPLATE=<<EOF > tmp.eu
-x: foo
+cat <<EOF > tmp.eu
+x: y.foo
 EOF
 
-cat <<EOF | eu - tmp.eu
-{ "foo": "bar" }
+cat <<EOF | eu y=json@- tmp.eu
+{ "foo": "bar", "fox": "bax" }
 EOF
