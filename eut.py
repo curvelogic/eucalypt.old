@@ -33,7 +33,7 @@ class Test:
 
     """ A test that by default passes with a zero return code """
 
-    RE = re.compile(r"(x?)(\d+)_(.*?).(eu|yaml)")
+    RE = re.compile(r"(x?)(\d+)_(.*?).(eu|yaml|json|toml)")
 
     def __init__(self, filepath, format="yaml"):
         self.filepath = filepath
@@ -146,10 +146,77 @@ class ErrorTest(Test):
     def check(self):
         return self.proc.returncode > 0
 
+
+class ShellTest:
+
+    """A test that runs a shell script and requires a zero returncode"""
+    RE = re.compile(r"(x?)(\d+)_(.*?).sh")
+
+    def __init__(self, filepath):
+        self.filepath = filepath
+        (ignore, id, name) = ShellTest.RE.fullmatch(filepath.name).groups()
+        self.id = "S" + id
+        self.ignore = ignore == 'x'
+        self.name = name
+        self.format = format
+        self.outfile = output_directory / filepath.relative_to(test_directory).with_suffix(f".out.{format}")
+        self.outfile.parent.mkdir(parents = True, exist_ok = True)
+        self.errfile = output_directory / filepath.relative_to(test_directory).with_suffix(f".{format}.err")
+        self.errfile.parent.mkdir(parents = True, exist_ok = True)
+
+
+    def run(self):
+
+        """ Run eucalypt files """
+
+        print(self.id, self.name, sep=' ', end=' ')
+
+        if self.ignore:
+
+            self.result = Result.IGNORE
+            print("ignore")
+
+        else:
+            with open(self.outfile, "wb") as out:
+                with open(self.errfile, "wb") as err:
+                    self.proc = subprocess.run(["bash", self.filepath],
+                                               stdout=out,
+                                               stderr=err)
+
+            if self.check():
+                print("pass")
+                self.result = Result.SUCCESS
+            else:
+                print("FAIL\n")
+                with open(self.errfile, "r") as err:
+                    errout = err.read().strip()
+                    if errout:
+                        print("error output:\n---")
+                        sys.stdout.write(errout)
+                        print("---\n")
+                    else:
+                        with open(self.outfile, "r") as out:
+                            print("failing output:\n--")
+                            sys.stdout.write(out.read())
+                            print("---\n")
+
+                self.result = Result.FAIL
+
+        return self
+
+    def check(self):
+        return self.proc.returncode == 0
+
+    def failed(self):
+        return self.result == Result.FAIL
+
+
 def find_simple_tests():
     return [Test(p,fmt) for (p, fmt) in
             product(sorted(chain(test_directory.glob("*.eu"),
-                                 test_directory.glob("*.yaml"))),
+                                 test_directory.glob("*.yaml"),
+                                 test_directory.glob("*.json"),
+                                 test_directory.glob("*.toml"))),
                            ["yaml", "json"])]
 
 def find_error_tests():
@@ -158,6 +225,8 @@ def find_error_tests():
 def find_benchmark_tests():
     return [BenchmarkTest(p) for p in sorted(test_directory.glob("bench/*.eu"))]
 
+def find_shell_tests():
+    return [ShellTest(p) for p in sorted(test_directory.glob("shell/*.sh"))]
 
 parser = argparse.ArgumentParser("Eucalypt test harness")
 parser.add_argument("-b", "--bench", action='store_true', default=False)
@@ -166,7 +235,7 @@ parser.add_argument("-n", "--repeats", action='store', type=int, default=100)
 def main():
     opts = parser.parse_args()
     prepare_directories()
-    tests = find_simple_tests() + find_error_tests()
+    tests = find_simple_tests() + find_error_tests() + find_shell_tests()
 
     if opts.bench:
         print(f"Timing standard tests with {opts.repeats} repeats.")
