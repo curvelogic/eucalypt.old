@@ -210,6 +210,21 @@ class ShellTest:
     def failed(self):
         return self.result == Result.FAIL
 
+    def bench(self, repeats):
+
+        """ Time repeated runs. """
+
+        if self.ignore:
+            return
+
+        print(self.id, self.name, sep=' ', end=' ')
+
+        self.sec = timeit.timeit(self.execute, number=repeats)
+
+        print(f"{self.sec}s")
+
+        return self
+
 
 def find_simple_tests():
     return [Test(p,fmt) for (p, fmt) in
