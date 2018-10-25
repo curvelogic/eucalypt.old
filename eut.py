@@ -165,6 +165,13 @@ class ShellTest:
         self.errfile.parent.mkdir(parents = True, exist_ok = True)
 
 
+    def execute(self):
+        with open(self.outfile, "wb") as out:
+            with open(self.errfile, "wb") as err:
+                self.proc = subprocess.run(["bash", self.filepath],
+                                           stdout=out,
+                                           stderr=err)
+
     def run(self):
 
         """ Run eucalypt files """
@@ -177,11 +184,7 @@ class ShellTest:
             print("ignore")
 
         else:
-            with open(self.outfile, "wb") as out:
-                with open(self.errfile, "wb") as err:
-                    self.proc = subprocess.run(["bash", self.filepath],
-                                               stdout=out,
-                                               stderr=err)
+            self.execute()
 
             if self.check():
                 print("pass")
