@@ -133,21 +133,19 @@ tests: {
     t6: (["fish", "crest"] map(str.prefix("gold")) second) = "goldcrest"
     t7: inc <$> [0,1,2] = [1,2,3]
     t8: map2(__ADD, [0, 0, 2], [3, 1, 0]) = [3, 1, 2]
-    t9: cons-if(not-five, 5, []) = []
-    t10: filter(not-five, [1, 2, 3, 4, 5, 6, 7, 8, 9]) = [1, 2, 3, 4, 6, 7, 8, 9]
-    t11: remove(not-five, [1, 2, 3, 4, 5, 6, 7, 8, 9]) = [5]
-    t12: append([1,1], [2,2]) = [1,1,2,2]
-    t13: append([:a], [:b]) = prepend([:b], [:a])
-    t14: [1] ++ [2] = [1, 2]
-    t15: concat([[0], [:a], ["x"]]) = [0, :a, "x"]
-    t16: (zip-with(pair, [:x, :y, :z], [1, 2, 3]) block) = { x: 1 y: 2 z: 3 }
-    t17: ([true, false] all-true?) = false
-    t18: ([true, false] any-true?) = true
-    t19: ([0, 0, 0, 0] all(zero?)) = true
-    t20: ([1, 1, 1, 1] any(zero?)) = false
-    t21:  ([:a, :b, :c] reverse) = [:c, :b, :a]
-  # TODO: waiting for fully lazy tails:
-  # repeat(:x) take(2)
+    t9: filter(not-five, [1, 2, 3, 4, 5, 6, 7, 8, 9]) = [1, 2, 3, 4, 6, 7, 8, 9]
+    t10: remove(not-five, [1, 2, 3, 4, 5, 6, 7, 8, 9]) = [5]
+    t11: append([1,1], [2,2]) = [1,1,2,2]
+    t12: append([:a], [:b]) = prepend([:b], [:a])
+    t13: [1] ++ [2] = [1, 2]
+    t14: concat([[0], [:a], ["x"]]) = [0, :a, "x"]
+    t15: (zip-with(pair, [:x, :y, :z], [1, 2, 3]) block) = { x: 1 y: 2 z: 3 }
+    t16: ([true, false] all-true?) = false
+    t17: ([true, false] any-true?) = true
+    t18: ([0, 0, 0, 0] all(zero?)) = true
+    t19: ([1, 1, 1, 1] any(zero?)) = false
+    t20:  ([:a, :b, :c] reverse) = [:c, :b, :a]
+    t21: repeat(:x) take(2) //= [:x, :x]
 
     pass: [ t1
 	  , t2
@@ -185,26 +183,17 @@ tests: {
     t9: zip-kv([:a, :b, :c], [1, 2, 3]) = { a: 1 b: 2 c: 3 }
     t10: ({ a: 3 b: 2 c: 1 } map-values(__MUL(2))) = { a: 6 b: 4 c: 2 }
     t11: ({ a: :a b: :b c: :c } map-keys(sym ∘ str.prefix("x-") ∘ str.of)) = { x-a: :a x-b: :b x-c: :c }
-
-    pass: [t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11] all-true?
+    t12: { x: :foo y: :bar } alter-value(:x, :baz) //= { x: :baz y: :bar }
+    t13: { a: 2 b: 2 } update-value(:b, inc) //= { a: 2 b: 3 }
+    t14: { a: { b: { c: 3 d: 0 } } } alter([:a, :b, :c], 0) //= { a: { b: { c: 0 d: 0} } }
+    t15: { a: { b: { c: 3 d: 0 } } } update([:a, :b, :c], inc) //= { a: { b: { c: 4 d: 0} } }
+    t16: {} set-value(:x, :foo) //= { x: :foo }
+    t17: { a: 0 } set-value(:b, 1) //= { a: 0 b: 1 }
+    t18: { a: 0 } set-value(:a, 1) //= { a: 1 }
+    t19: { a: { b: { c: 0 } } } merge-at([:a, :b], { d: 0 }) //= { a: { b: { c: 0 d: 0 } } }
+    pass: [t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19] all-true?
   }
 
 }
 
-# excruciatingly slow until we have a sane evaluator
-# all-true: tests select-items(by-value(has(:pass))) map(lookup(:pass) ∘ value) concat all-true?
-
-pass: [ tests.metadata.pass
-      , tests.environment.pass
-      , tests.basics.pass
-      , tests.list-basics.pass
-      , tests.block-basics.pass
-      , tests.boolean.pass
-      , tests.equality.pass
-      , tests.arithmetic.pass
-      , tests.strings.pass
-      , tests.combinators.pass
-      , tests.lists.pass
-      , tests.block-lib.pass] all-true?
-
-RESULT: if(pass, :PASS, :FAIL)
+RESULT: tests select-values(has(:pass)) all(lookup(:pass)) then(:PASS, :FAIL)
