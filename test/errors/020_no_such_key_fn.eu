@@ -1,0 +1,5 @@
+# -*- mode: conf -*-
+ns: {
+  f(x): x
+}
+x: ns.g(1)

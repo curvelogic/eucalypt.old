@@ -61,12 +61,12 @@ tests: {
     t1: 1 = 1
     t2: 1.0 = 1.0
     t3: "x" = "x"
-    #TODO: parse error! t4: :x = :x
+    t4: :x = :x
     t5: true = true
     t6: null = null
     t7: not(null != null)
 
-    pass: [t1, t2, t3, t5, t6, t7] all-true?
+    pass: [t1, t2, t3, t4, t5, t6, t7] all-true?
   }
 
   arithmetic: {
@@ -196,4 +196,4 @@ tests: {
 
 }
 
-RESULT: tests select-values(has(:pass)) all(lookup(:pass)) then(:PASS, :FAIL)
+RESULT: tests select-values(has(:pass)) all(_.pass) then(:PASS, :FAIL)
