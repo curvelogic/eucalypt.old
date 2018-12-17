@@ -9,6 +9,7 @@ tests: {
   ζ: set.from([:a, "a", set.empty]) set.insert(set.empty) //= set.from([:a, "a", set.empty])
   η: :a ∈ set.from([:a, :b, :c])
   θ: set.from([:c, :b, :a]) ∋ :b
+  ι: set.from([:c, :b, :a]) set.members //= [:a, :b, :c]
 }
 
 RESULT: tests values all-true? then(:PASS, :FAIL)

@@ -178,7 +178,7 @@ tests: {
     t4: [1, 1] = ([0, 2] bimap(inc, dec))
     t5: [[0, 1], [1, 2], [2, 3]] map-first(inc) map(apply(__EQ)) all-true?
     t6: [[0, 1], [1, 2], [2, 3]] map-second(dec) map(apply(__EQ)) all-true?
-    t7: ({ a: 1.0 b: -1.0 } map-kv(pair)) = { a: 1.0 b: -1.0 }
+    t7: ({ a: 1.0 b: -1.0 } map-kv(pair) block) = { a: 1.0 b: -1.0 }
     t8: ([pair(:a, 1), pair(:b, 2)] block) = { a: 1 b: 2 }
     t9: zip-kv([:a, :b, :c], [1, 2, 3]) = { a: 1 b: 2 c: 3 }
     t10: ({ a: 3 b: 2 c: 1 } map-values(__MUL(2))) = { a: 6 b: 4 c: 2 }
@@ -196,4 +196,4 @@ tests: {
 
 }
 
-RESULT: tests select-values(has(:pass)) all(_.pass) then(:PASS, :FAIL)
+RESULT: tests filter-values(has(:pass)) all(_.pass) then(:PASS, :FAIL)
