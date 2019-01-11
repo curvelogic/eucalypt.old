@@ -1,0 +1,3 @@
+α: :blah // { tag: "!Ref" }
+
+RESULT: meta(α) = { tag: "!Ref" } then(:PASS, :FAIL)

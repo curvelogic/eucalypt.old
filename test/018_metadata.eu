@@ -1,6 +1,3 @@
-# -*- mode: conf -*-
-
-
 with-meta: __WITHMETA
 (v // m): v with-meta(m)
 (v //=> e): v with-meta({ assert: __EQ(e)})

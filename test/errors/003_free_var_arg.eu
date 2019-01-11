@@ -1,5 +1,4 @@
-#!/usr/bin/env eu -B
-# -*- mode: conf -*-
+#!/usr/bin/env eu
 
 z(s) : s
 

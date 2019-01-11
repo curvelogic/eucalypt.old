@@ -1,4 +1,3 @@
-# -*- mode: conf -*-
 ns: {
   z: 9
   # f(x): x

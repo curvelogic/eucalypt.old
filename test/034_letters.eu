@@ -1,5 +1,3 @@
-# -*- mode: conf -*-
-
 tests: {
   α: "abcd" str.letters //= ["a", "b", "c", "d"]
   β: "" str.letters //= []

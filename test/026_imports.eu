@@ -1,5 +1,3 @@
-# -*- mode: conf -*-
-
 ` { import: "test/aux/aux_import_a.eu"}
 a: { result: "{foo}&{bar}"}
 

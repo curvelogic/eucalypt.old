@@ -1,5 +1,4 @@
 #!/usr/bin/env eu
-# -*- mode: conf -*-
 
 ` "Unicode operators are allowed (and encouraged)."
 (f ∘ g): compose(f, g)

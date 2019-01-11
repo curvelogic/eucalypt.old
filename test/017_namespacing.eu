@@ -1,5 +1,3 @@
-# -*- mode: conf -*-
-
 (l=r): __EQ(l,r)
 
 fn: {

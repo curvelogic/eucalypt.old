@@ -1,5 +1,3 @@
-# -*- mode: conf -*-
-
 block1: {
   k: 1
   z: "hello"

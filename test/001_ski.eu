@@ -1,6 +1,4 @@
 #!/usr/bin/env eu
-# -*- mode: conf -*-
-
 # Simple test of SKI combinators and simple functions
 
 ` "I combinator: identity"

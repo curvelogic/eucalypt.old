@@ -1,5 +1,4 @@
 #!/usr/bin/env eu
-# -*- mode: conf -*-
 
 ` "`__NULL` is a built in that exports as JSON/YAML null"
 null: __NULL

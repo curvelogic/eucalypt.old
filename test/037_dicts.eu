@@ -1,5 +1,3 @@
-# -*- mode: conf -*-
-
 tests: {
   α: dict.empty //= dict.empty
   β: dict.empty dict.put(1, 4) dict.put(2, 3) //= dict.empty dict.put(2, 3) dict.put(1, 4)

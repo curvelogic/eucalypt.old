@@ -1,5 +1,3 @@
-# -*- mode: conf -*-
-
 # requires prelude
 
 '~': io.env.HOME

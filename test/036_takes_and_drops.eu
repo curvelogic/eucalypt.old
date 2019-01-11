@@ -1,5 +1,3 @@
-# -*- mode: conf -*-
-
 tests: {
   α: [0, 1, 2, 3] take-while(< 3) //= [0, 1, 2]
   β: [{ id: :a p: true}, { id: :b p: true}, { id: :c p: false }] take-while(_.p) map(_.id) //= [:a, :b]

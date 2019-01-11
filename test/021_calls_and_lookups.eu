@@ -1,5 +1,5 @@
-#!/usr/bin/env eu -B
-# -*- mode: conf -*-
+#!/usr/bin/env eu
+
 
 f(x,y,z): x + y + z
 

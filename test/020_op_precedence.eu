@@ -1,5 +1,3 @@
-# -*- mode: conf -*-
-
 ` { associates: :left
     precedence: :sum }
 (x + y): __ADD(x, y)

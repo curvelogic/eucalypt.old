@@ -1,5 +1,5 @@
 #!/usr/bin/env eu -B
-# -*- mode: conf -*-
+
 
 split: __SPLIT
 split-on(re, s): split(s, re)

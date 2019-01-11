@@ -1,5 +1,4 @@
-#!/usr/bin/env eu -B
-# -*- mode: conf -*-
+#!/usr/bin/env eu
 
 h0: __HEAD(__CONS([1, 2, 3] __HEAD, [1, 2, 3] __TAIL))
 

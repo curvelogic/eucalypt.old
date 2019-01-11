@@ -1,5 +1,3 @@
-# -*- mode: conf -*-
-
 # doesn't require prelude; uses builtins only
 
 ` :suppress

@@ -1,5 +1,3 @@
-# -*- mode: conf -*-
-
 # Keys are symbols and grammatically simple, normal names and do not
 # allow dots.
 ` { x.y : a.b.c }

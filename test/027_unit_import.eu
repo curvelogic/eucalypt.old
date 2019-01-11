@@ -1,5 +1,3 @@
-# -*- mode: conf -*-
-
 {
   import: ["test/aux/aux_import_a.eu", "test/aux/aux_import_b.eu"]
   doc: "Unit level metadata test"

@@ -1,5 +1,4 @@
-#!/usr/bin/env eu -B
-# -*- mode: conf -*-
+#!/usr/bin/env eu
 
 # TODO: unclear what to specify here at the moment so this test just
 # enshrines the current behaviour until it's resolved. Might as well

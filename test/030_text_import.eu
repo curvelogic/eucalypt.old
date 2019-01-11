@@ -1,5 +1,3 @@
-# -*- mode: conf -*-
-
 { import: "lines=test/aux/aux_import.txt" }
 
 unit-import-matches: lines map(str.split-on(",\s")) map(first) //= [1, 2, 3] map("line {}")
