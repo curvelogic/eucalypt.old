@@ -13,7 +13,7 @@ lambdafied: {
 
   zones: ["a", "b", "c"] map("eu-west-2{}")
   triple: "{},{},{}"
-  reverse-triple: "{2},{1},{0}"
+  reverse-triple: "{2},{ 1 },{0}"
 
   truths: [
     zones = ["eu-west-2a", "eu-west-2b", "eu-west-2c"],
@@ -40,11 +40,28 @@ escapes: {
   ]
 }
 
+nested: {
+  data: {
+    foo: {
+      bar: 99
+    }
+  }
+
+  α: "{data.foo.bar}" //= "99"
+  β: "{data.foo.bar}" //= "99"
+  γ: "{data.foo.bar:%06d}" //= "000099"
+
+  pass: α ∧ β ∧ γ
+}
+
+
+
 ` :suppress
 pass: (interpolation.truths ++
        lambdafied.truths ++
        mixed.truths ++
-       escapes.truths)
+       escapes.truths ++
+       [nested.pass])
        all-true?
 
 RESULT: if(pass, :PASS, :FAIL)
