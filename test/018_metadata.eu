@@ -1,14 +1,3 @@
-with-meta: __WITHMETA
-(v // m): v with-meta(m)
-(v //=> e): v with-meta({ assert: __EQ(e)})
-(v //=? f): v with-meta({ assert: f})
-
-meta: __META
-lookup: __LOOKUP
-lookup-or: __LOOKUPOR
-and: __AND
-true: __TRUE
-
 k: 1 // { note: "this is one" }
 k2: (1 + 1) // { note: "this is two" }
 
@@ -27,7 +16,7 @@ assertions: {
 }
 
 tags: {
-  x: 9 // { export: { yaml: { tag: "Ref" } } }
+  x: 9 // { tag: "!Ref" }
 }
 
 test: (1 + 1) //=> 2

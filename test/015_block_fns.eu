@@ -35,9 +35,8 @@ merging: {
     }
   }
 
-  merge: __MERGE
-  merge-with(r, l): merge(l, r)
-  with-tags: merge-with({tags: [:a, :b, :c]})
+  fmerge: merge flip
+  with-tags: fmerge({tags: [:a, :b, :c]})
 
   m-tagged: m with-tags
   m2-tagged: m2 with-tags
@@ -112,7 +111,7 @@ lookups: {
 pass: [ checks.trues values all-true?
       , merging.checks.trues values all-true?
       , lookups.checks.trues all-true?
-      # , deep-merge.pass
+      , deep-merge.pass
       ] all-true?
 
 RESULT: if(pass, :PASS, :FAIL)
