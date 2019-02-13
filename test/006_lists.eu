@@ -1,7 +1,5 @@
 #!/usr/bin/env eu
 
-h0: __HEAD(__CONS([1, 2, 3] __HEAD, [1, 2, 3] __TAIL))
-
 list: [1, 2, 3, 4, 5]
 
 head: __HEAD

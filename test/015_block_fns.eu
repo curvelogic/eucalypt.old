@@ -27,14 +27,6 @@ merging: {
   m2: ({ a: 2 } { a: 3 })
   a: m.a
   a2: m2.a
-  checks: {
-    trues: {
-      a: ({ a: 2 } { b: 3 }) = { a: 2 b: 3 }
-      b: ({ a: 2 } { a: 3 }) = { a: 3 }
-      c: ({ a: 1 b: 2 c: 3 d: 4} { b: 1 c: 1 d: 1}) = { a: 1 b: 1 c: 1 d: 1 }
-    }
-  }
-
   fmerge: merge flip
   with-tags: fmerge({tags: [:a, :b, :c]})
 
@@ -42,6 +34,9 @@ merging: {
   m2-tagged: m2 with-tags
   checks: {
     trues: [
+      ({ a: 2 } { b: 3 }) = { a: 2 b: 3 },
+      ({ a: 2 } { a: 3 }) = { a: 3 },
+      ({ a: 1 b: 2 c: 3 d: 4} { b: 1 c: 1 d: 1}) = { a: 1 b: 1 c: 1 d: 1 },
       m-tagged = { a: 2 b: 3 tags: [:a, :b, :c]},
       m2-tagged = { a: 3 tags: [:a, :b, :c]}
     ]
@@ -109,7 +104,7 @@ lookups: {
 }
 
 pass: [ checks.trues values all-true?
-      , merging.checks.trues values all-true?
+      , merging.checks.trues all-true?
       , lookups.checks.trues all-true?
       , deep-merge.pass
       ] all-true?
